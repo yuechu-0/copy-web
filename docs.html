@@ -69,7 +69,13 @@
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.5);
         }
+
+        body { padding-bottom: env(safe-area-inset-bottom); }
     </style>
+
+    <script src="js/lang.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/mobile.js"></script>
 </head>
 <body class="text-gray-800 font-sans antialiased relative flex flex-col min-h-screen bg-[#f8fafc]">
 
@@ -80,44 +86,79 @@
     </div>
 
     <nav class="sticky top-0 z-50 bg-white/60 backdrop-blur-md border-b border-white/50 shadow-sm transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+            <div class="flex justify-between items-center h-16 relative z-20">
                 <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="window.location.href='index.html'">
                     <img src="images/logo.svg" alt="DeekCloud Logo" class="w-auto object-contain" style="height: clamp(10px, 5vw, 20px);">
                 </div>
                 
                 <div class="hidden md:flex space-x-8 h-full">
-                    <a href="index.html" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-900 hover:border-gray-300 transition-all duration-300" style="text-decoration: none;">首页</a>
-                    <a href="api.html" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-900 hover:border-gray-300 transition-all duration-300" style="text-decoration: none;">大模型API</a>
-                    <a href="products.html" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-900 hover:border-gray-300 transition-all duration-300" style="text-decoration: none;">产品与方案</a>
-                    <a href="question.html" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-900 hover:border-gray-300 transition-all duration-300" style="text-decoration: none;">常见问题</a>
+                    <a href="index.html" data-i18n="nav.home" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-900 hover:border-gray-300 transition-all duration-300" style="text-decoration: none;">首页</a>
+                    <a href="api.html" data-i18n="nav.api" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-900 hover:border-gray-300 transition-all duration-300" style="text-decoration: none;">大模型API</a>
+                    <a href="products.html" data-i18n="nav.products" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-900 hover:border-gray-300 transition-all duration-300" style="text-decoration: none;">产品与方案</a>
+                    <a href="question.html" data-i18n="nav.faq" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-900 hover:border-gray-300 transition-all duration-300" style="text-decoration: none;">常见问题</a>
                 </div>
 
-                <div class="hidden md:flex items-center space-x-2 text-primary font-semibold">
-                    <svg fill="none" height="32" viewBox="0 0 24 24" width="32" xmlns="http://www.w3.org/2000/svg" style="flex: 0 0 auto; line-height: 1;"><title>Telegram</title><defs><linearGradient id="tgGradient" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#37AEE2"></stop><stop offset="100%" stop-color="#1E96C8"></stop></linearGradient></defs><circle cx="12" cy="12" r="12" fill="url(#tgGradient)"></circle><path d="M5.49 11.66l11.77-4.54c.54-.21 1.04.14.86.88l-2.01 9.49c-.15.68-.56.85-1.13.53l-3.07-2.26-1.48 1.43c-.16.16-.3.3-.61.3l.22-3.13 5.71-5.16c.25-.22-.05-.35-.39-.13l-7.06 4.44-3.04-.95c-.66-.21-.67-.66.14-.97z" fill="white"></path></svg>
-                    <span>@deekcloud</span>
+                <div class="hidden md:flex items-center space-x-4 text-primary font-semibold">
+                    <button onclick="toggleLanguage()" class="flex items-center space-x-1 px-3 py-1.5 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors" aria-label="Toggle Language">
+                        <span class="text-sm font-medium text-gray-700">🌐</span>
+                        <span class="lang-switch-text text-sm font-medium text-gray-700">EN</span>
+                    </button>
+                </div>
+
+                <div class="md:hidden flex items-center space-x-3 relative z-50">
+                    <button onclick="toggleLanguage()" class="px-2 py-1 text-sm font-medium text-gray-700 bg-gray-100/80 rounded-md shadow-sm">🌐 <span class="lang-switch-text">EN</span></button>
+                    <button id="mobile-menu-btn" class="p-2 focus:outline-none relative w-8 h-8 flex items-center justify-center">
+                        <span class="absolute w-5 h-[2px] bg-gray-700 transition-all duration-300 transform -translate-y-1.5" id="menu-line-1"></span>
+                        <span class="absolute w-5 h-[2px] bg-gray-700 transition-all duration-300" id="menu-line-2"></span>
+                        <span class="absolute w-5 h-[2px] bg-gray-700 transition-all duration-300 transform translate-y-1.5" id="menu-line-3"></span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="mobile-menu-content" class="md:hidden absolute top-full left-0 right-0 bg-white/95 backdrop-blur-md shadow-md transition-all duration-300 overflow-hidden max-h-0 opacity-0 z-10">
+                <div class="flex flex-col w-full">
+                    <a href="index.html" data-i18n="nav.home">首页</a>
+                    <a href="api.html" data-i18n="nav.api">大模型API</a>
+                    <a href="products.html" data-i18n="nav.products">产品与方案</a>
+                    <a href="question.html" data-i18n="nav.faq">常见问题</a>
                 </div>
             </div>
         </div>
     </nav>
 
+    <div id="mobile-menu" class="fixed inset-0 z-[100] bg-white transform translate-x-full transition-transform duration-300 md:hidden flex flex-col">
+        <div class="flex justify-between items-center p-4 border-b border-gray-100">
+            <img src="images/logo.svg" class="h-6" alt="Logo">
+            <button id="mobile-menu-close" class="p-2 text-gray-600 focus:outline-none">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div class="flex flex-col p-6 space-y-6">
+            <a href="index.html" data-i18n="nav.home" class="text-lg font-medium text-gray-800">首页</a>
+            <a href="api.html" data-i18n="nav.api" class="text-lg font-medium text-gray-800">大模型API</a>
+            <a href="products.html" data-i18n="nav.products" class="text-lg font-medium text-gray-800">产品与方案</a>
+            <a href="question.html" data-i18n="nav.faq" class="text-lg font-medium text-gray-800">常见问题</a>
+        </div>
+    </div>
+
     <div class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col md:flex-row gap-6 mt-8 mb-20 relative z-10">
         
-        <aside class="w-full md:w-64 flex-shrink-0 glass-panel rounded-2xl p-4 shadow-sm h-fit sticky top-24">
+        <aside class="w-full md:w-64 flex-shrink-0 glass-panel rounded-2xl p-4 shadow-sm h-fit md:sticky md:top-24">
             <div class="mb-6 px-3">
-                <h2 class="text-xl font-bold text-gray-800">文档中心</h2>
+                <h2 class="text-xl font-bold text-gray-800" data-i18n="docs.sidebar.title">文档中心</h2>
             </div>
             <nav class="space-y-1" id="sidebar-nav">
                 <a href="#home" class="menu-item group flex items-center px-3 py-3 text-sm font-medium rounded-lg text-gray-600 hover:bg-blue-50/50 hover:text-primary" data-hash="home">
                     <svg class="flex-shrink-0 mr-3 h-5 w-5 text-gray-500 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    <span class="truncate">文档首页</span>
+                    <span class="truncate" data-i18n="docs.sidebar.home">文档首页</span>
                 </a>
 
                 <div class="submenu-container submenu-open pt-2">
                     <button class="w-full flex items-center justify-between px-3 py-3 text-sm font-medium rounded-lg text-gray-600 hover:bg-blue-50/50 transition-colors focus:outline-none" onclick="toggleSubmenu(this)">
                         <div class="flex items-center">
                             <svg class="flex-shrink-0 mr-3 h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                            <span>协议文档</span>
+                            <span data-i18n="docs.sidebar.legal">协议文档</span>
                         </div>
                         <svg class="chevron h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
@@ -125,11 +166,11 @@
                         <div class="pl-5 pr-2 py-1 space-y-1">
                             <a href="#privacy" class="menu-item group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-500 hover:text-primary" data-hash="privacy">
                                 <svg class="flex-shrink-0 mr-3 h-[18px] w-[18px] text-gray-400 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                                <span class="truncate">隐私协议</span>
+                                <span class="truncate" data-i18n="docs.sidebar.privacy">隐私协议</span>
                             </a>
                             <a href="#user-agreement" class="menu-item group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-500 hover:text-primary" data-hash="user-agreement">
                                 <svg class="flex-shrink-0 mr-3 h-[18px] w-[18px] text-gray-400 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 4v12l-4-2-4 2V4M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                <span class="truncate">用户协议</span>
+                                <span class="truncate" data-i18n="docs.sidebar.terms">用户协议</span>
                             </a>
                         </div>
                     </div>
@@ -139,7 +180,7 @@
                     <button class="w-full flex items-center justify-between px-3 py-3 text-sm font-medium rounded-lg text-gray-600 hover:bg-blue-50/50 transition-colors focus:outline-none" onclick="toggleSubmenu(this)">
                         <div class="flex items-center">
                             <svg class="flex-shrink-0 mr-3 h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
-                            <span>云厂商相关</span>
+                            <span data-i18n="docs.sidebar.cloud">云厂商相关</span>
                         </div>
                         <svg class="chevron h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
@@ -147,19 +188,19 @@
                         <div class="pl-5 pr-2 py-1 space-y-1">
                             <a href="#cloud-console" class="menu-item group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-500 hover:text-primary" data-hash="cloud-console">
                                 <svg class="flex-shrink-0 mr-3 h-[18px] w-[18px] text-gray-400 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
-                                <span class="truncate">各云厂商控制台索引</span>
+                                <span class="truncate" data-i18n="docs.sidebar.cConsole">各云厂商控制台索引</span>
                             </a>
                             <a href="#cloud-privacy" class="menu-item group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-500 hover:text-primary" data-hash="cloud-privacy">
                                 <svg class="flex-shrink-0 mr-3 h-[18px] w-[18px] text-gray-400 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                                <span class="truncate">云厂商隐私政策</span>
+                                <span class="truncate" data-i18n="docs.sidebar.cPrivacy">云厂商隐私政策</span>
                             </a>
                             <a href="#cloud-service-terms" class="menu-item group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-500 hover:text-primary" data-hash="cloud-service-terms">
                                 <svg class="flex-shrink-0 mr-3 h-[18px] w-[18px] text-gray-400 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                <span class="truncate">云厂商服务协议</span>
+                                <span class="truncate" data-i18n="docs.sidebar.cTerms">云厂商服务协议</span>
                             </a>
                             <a href="#cloud-sla" class="menu-item group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-500 hover:text-primary" data-hash="cloud-sla">
                                 <svg class="flex-shrink-0 mr-3 h-[18px] w-[18px] text-gray-400 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
-                                <span class="truncate">云厂商服务等级协议</span>
+                                <span class="truncate" data-i18n="docs.sidebar.cSla">云厂商服务等级协议</span>
                             </a>
                         </div>
                     </div>
@@ -169,8 +210,159 @@
 
         <main class="flex-1 glass-panel rounded-2xl shadow-sm min-h-[600px] flex flex-col bg-white">
             <div id="doc-body" class="p-8 md:p-12 doc-content flex-1 bg-white/50 rounded-2xl overflow-x-auto">
-                </div>
+            </div>
         </main>
+    </div>
+
+    <footer class="bg-dark/95 backdrop-blur-sm pt-16 pb-8 border-t border-gray-800 mt-auto relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+                <div>
+                    <span class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 tracking-tight inline-block mb-4">DeekCloud</span>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-6 border-l-2 border-gray-700 pl-4" data-i18n="footer.desc">
+                        DeekCloud 致力于为您提供一站式多云代理服务。我们通过整合全球优质云资源，助力企业降本增效，轻松构建云上业务。
+                    </p>
+                    <div class="flex items-center space-x-2 text-gray-300 bg-gray-800/50 p-3 rounded-full inline-flex">
+                        <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path>
+                        </svg>
+                        <a href="https://t.me/deekcloud" target="_blank" class="relative group flex flex-col items-center hover:-translate-y-1 transition-transform duration-300 mb-1">
+                            <span class="font-semibold tracking-wider text-sm">@deekcloud</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-white text-lg font-bold mb-6 relative inline-block"><span data-i18n="footer.quickNav">快速导航</span><span class="absolute bottom-0 left-0 w-8 h-0.5 bg-primary rounded"></span></h3>
+                    <ul class="space-y-3">
+                        <li><a href="index.html" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center"><svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg><span data-i18n="nav.home">首页</span></a></li>
+                        <li><a href="api.html" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center"><svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg><span data-i18n="nav.api">大模型API</span></a></li>
+                        <li><a href="products.html" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center"><svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg><span data-i18n="nav.products">产品与方案</span></a></li>
+                        <li><a href="question.html" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center"><svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg><span data-i18n="nav.faq">常见问题</span></a></li>                
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-white text-lg font-bold mb-6 relative inline-block"><span data-i18n="footer.helpSupport">帮助与支持</span><span class="absolute bottom-0 left-0 w-8 h-0.5 bg-primary rounded"></span></h3>
+                    <ul class="space-y-3">
+                        <li><a href="question.html" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center"><svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg><span data-i18n="footer.helpCenter">帮助中心</span></a></li>
+                        <li><a href="https://t.me/deekcloud" target="_blank" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center"><svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg><span data-i18n="footer.feedback">意见反馈</span></a></li>
+                        <li><a href="docs.html#privacy" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center"><svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg><span data-i18n="footer.privacy">隐私政策</span></a></li>
+                        <li><a href="docs.html#user-agreement" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center"><svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg><span data-i18n="footer.terms">服务条款</span></a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-white text-lg font-bold mb-6 relative inline-block"><span data-i18n="footer.supportedClouds">支持的云平台</span><span class="absolute bottom-0 left-0 w-8 h-0.5 bg-primary rounded"></span></h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-center text-gray-400 text-sm"><span class="w-1.5 h-1.5 bg-primary rounded-full mr-3 animate-pulse"></span> <span data-i18n="footer.aliyun">阿里云国际</span></li>
+                        <li class="flex items-center text-gray-400 text-sm"><span class="w-1.5 h-1.5 bg-primary rounded-full mr-3 animate-pulse"></span> <span data-i18n="footer.tencent">腾讯云国际</span></li>
+                        <li class="flex items-center text-gray-400 text-sm"><span class="w-1.5 h-1.5 bg-primary rounded-full mr-3 animate-pulse"></span> <span data-i18n="footer.huawei">华为云国际</span></li>
+                        <li class="flex items-center text-gray-400 text-sm"><span class="w-1.5 h-1.5 bg-primary rounded-full mr-3 animate-pulse"></span> <span data-i18n="footer.aws">AWS Cloud</span></li>
+                        <li class="flex items-center text-gray-400 text-sm"><span class="w-1.5 h-1.5 bg-primary rounded-full mr-3 animate-pulse"></span> <span data-i18n="footer.gcp">Google Cloud</span></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
+                <p data-i18n="footer.rights">&copy; 2026 DeekCloud. All rights reserved.</p>
+                <div class="flex space-x-4 mt-4 md:mt-0">
+                    <a href="docs.html#privacy" data-i18n="footer.privacy" class="hover:text-gray-300 transition-colors">隐私政策</a>
+                    <a href="docs.html#user-agreement" data-i18n="footer.terms" class="hover:text-gray-300 transition-colors">服务条款</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div class="fixed right-6 top-1/2 -translate-y-1/2 z-50 flex-col items-center space-y-4 hidden md:flex">
+        <a href="https://t.me/deekcloud" target="_blank" class="relative group flex flex-col items-center hover:-translate-y-1 transition-transform duration-300 mb-1">
+            <div class="w-[52px] h-[52px] bg-white rounded-full shadow-[0_0_0_4px_white,0_4px_12px_rgba(55,174,226,0.3)] flex items-center justify-center relative z-10">
+                <svg class="w-[48px] h-[48px]" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="tgSidebarGrad" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stop-color="#37AEE2"></stop>
+                            <stop offset="100%" stop-color="#1E96C8"></stop>
+                        </linearGradient>
+                    </defs>
+                    <circle cx="12" cy="12" r="12" fill="url(#tgSidebarGrad)"></circle>
+                    <path d="M5.49 11.66l11.77-4.54c.54-.21 1.04.14.86.88l-2.01 9.49c-.15.68-.56.85-1.13.53l-3.07-2.26-1.48 1.43c-.16.16-.3.3-.61.3l.22-3.13 5.71-5.16c.25-.22-.05-.35-.39-.13l-7.06 4.44-3.04-.95c-.66-.21-.67-.66.14-.97z" fill="white"></path>
+                </svg>
+            </div>
+            <div class="absolute -bottom-2.5 bg-[#1E96C8] text-white text-[11px] font-bold px-2.5 py-0.5 rounded shadow-sm z-20 whitespace-nowrap" data-i18n="social.contact">
+                联系客服
+            </div>
+        </a>
+
+        <div class="bg-[#F8FAFC]/95 backdrop-blur-md rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.06)] py-6 px-3 flex flex-col items-center space-y-6 border border-white">
+            <a href="https://t.me/deekcloud" target="_blank" class="flex flex-col items-center group">
+                <div class="w-8 h-8 flex items-center justify-center rounded-full group-hover:bg-[#25D366]/10 transition-colors duration-300">
+                    <svg class="w-[20px] h-[20px] text-[#25D366]" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 0C5.412 0 .046 5.365.046 11.986c0 2.115.552 4.167 1.6 5.986L.046 24l6.177-1.62c1.761.947 3.737 1.446 5.808 1.446 6.619 0 11.985-5.365 11.985-11.986S18.65 0 12.031 0zm.006 21.841c-1.789 0-3.538-.481-5.074-1.393l-.364-.216-3.77.989.998-3.676-.237-.377a9.985 9.985 0 0 1-1.528-5.334c0-5.523 4.494-10.017 10.017-10.017s10.016 4.494 10.016 10.017c0 5.522-4.493 10.017-10.016 10.017zm5.5-7.514c-.302-.151-1.787-.882-2.064-.984-.277-.101-.479-.151-.68.151-.202.302-.782.984-.959 1.185-.176.202-.353.227-.655.076-.302-.151-1.275-.47-2.428-1.503-.898-.806-1.504-1.801-1.68-2.103-.176-.302-.019-.465.132-.616.136-.136.302-.353.453-.529.151-.176.202-.302.302-.504.101-.202.05-.378-.025-.529-.076-.151-.68-1.638-.933-2.243-.245-.59-.496-.51-.68-.52-.176-.01-.378-.01-.579-.01-.202 0-.529.076-.806.378-.277.302-1.058 1.033-1.058 2.52s1.083 2.922 1.234 3.123c.151.202 2.13 3.25 5.158 4.556 2.051.884 2.763.958 3.518.882.85-.086 2.064-.844 2.355-1.659.29-.815.29-1.514.202-1.659-.088-.146-.315-.222-.617-.373z"/></svg>
+                </div>
+                <span class="text-[11px] text-gray-600 mt-0.5" data-i18n="social.whatsapp">WhatsApp</span>
+            </a>
+            <a href="https://x.com/zqs1qcep2uay9ef?s=21&t=oJB6mzCfgk0lUdpuDrt61w" target="_blank" class="flex flex-col items-center group">
+                <div class="w-8 h-8 flex items-center justify-center rounded-full group-hover:bg-gray-200 transition-colors duration-300">
+                    <svg class="w-[16px] h-[16px] text-gray-900" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                </div>
+                <span class="text-[11px] text-gray-600 mt-0.5" data-i18n="social.x">X</span>
+            </a>
+            <a href="https://www.facebook.com/share/17kP1GqZs4/?mibextid=LQQJ4d" target="_blank" class="flex flex-col items-center group">
+                <div class="w-8 h-8 flex items-center justify-center rounded-full group-hover:bg-[#0084FF]/10 transition-colors duration-300">
+                    <svg class="w-[20px] h-[20px] text-[#0084FF]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.053 0 11.289c0 3.551 1.71 6.726 4.382 8.868v3.843l4.004-2.203c1.166.326 2.396.5 3.614.5 6.627 0 12-5.053 12-11.289S18.627 0 12 0zm1.096 15.088l-2.822-3.007-5.503 3.007 6.052-6.425 2.89 3.007 5.435-3.007-6.052 6.425z"/></svg>
+                </div>
+                <span class="text-[11px] text-gray-600 mt-0.5" data-i18n="social.messenger">Messenger</span>
+            </a>
+            <a href="https://discord.com/users/deekcloud" target="_blank" class="flex flex-col items-center group">
+                <div class="w-8 h-8 flex items-center justify-center rounded-full group-hover:bg-[#5865F2]/10 transition-colors duration-300">
+                    <svg class="w-[20px] h-[20px] text-[#5865F2]" fill="currentColor" viewBox="0 0 24 24"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></svg>
+                </div>
+                <span class="text-[11px] text-gray-600 mt-0.5" data-i18n="social.discord">Discord</span>
+            </a>
+        </div>
+
+        <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="w-11 h-11 bg-white/95 backdrop-blur-md rounded-full shadow-[0_4px_15px_rgb(0,0,0,0.06)] border border-gray-100 flex items-center justify-center text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition-all duration-300 hover:-translate-y-1 mt-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" /></svg>
+        </button>
+    </div>
+
+    <div class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-t border-gray-100 p-3 flex justify-between items-center shadow-[0_-10px_20px_rgba(0,0,0,0.03)] pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
+        
+        <a href="https://t.me/deekcloud" class="flex-1 flex justify-center items-center py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-full font-bold text-[15px] tracking-wide shadow-lg shadow-primary/30 active:scale-95 transition-all duration-200">
+            <svg class="w-5 h-5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path>
+            </svg>
+            <span data-i18n="social.contact">联系客服</span>
+        </a>
+
+        <button id="mobile-social-toggle" class="ml-3 p-3 bg-gray-100/80 rounded-full text-gray-600 flex items-center justify-center shadow-sm active:bg-gray-200 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path></svg>
+        </button>
+    </div>
+
+    <div id="mobile-social-sheet" class="fixed inset-0 z-[100] hidden">
+        <div id="mobile-social-overlay" class="absolute inset-0 bg-black/50 opacity-0 transition-opacity duration-300"></div>
+        <div id="mobile-social-content" class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl transform translate-y-full transition-transform duration-300 p-6 pb-10">
+            <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-6"></div>
+            <h3 class="text-center text-lg font-bold mb-6" data-i18n="social.more">更多联系方式</h3>
+            <div class="grid grid-cols-4 gap-4">
+                <a href="https://t.me/deekcloud" class="flex flex-col items-center">
+                    <div class="w-12 h-12 flex items-center justify-center rounded-full bg-[#25D366]/10 mb-2"><svg class="w-6 h-6 text-[#25D366]" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 0C5.412 0 .046 5.365.046 11.986c0 2.115.552 4.167 1.6 5.986L.046 24l6.177-1.62c1.761.947 3.737 1.446 5.808 1.446 6.619 0 11.985-5.365 11.985-11.986S18.65 0 12.031 0zm.006 21.841c-1.789 0-3.538-.481-5.074-1.393l-.364-.216-3.77.989.998-3.676-.237-.377a9.985 9.985 0 0 1-1.528-5.334c0-5.523 4.494-10.017 10.017-10.017s10.016 4.494 10.016 10.017c0 5.522-4.493 10.017-10.016 10.017zm5.5-7.514c-.302-.151-1.787-.882-2.064-.984-.277-.101-.479-.151-.68.151-.202.302-.782.984-.959 1.185-.176.202-.353.227-.655.076-.302-.151-1.275-.47-2.428-1.503-.898-.806-1.504-1.801-1.68-2.103-.176-.302-.019-.465.132-.616.136-.136.302-.353.453-.529.151-.176.202-.302.302-.504.101-.202.05-.378-.025-.529-.076-.151-.68-1.638-.933-2.243-.245-.59-.496-.51-.68-.52-.176-.01-.378-.01-.579-.01-.202 0-.529.076-.806.378-.277.302-1.058 1.033-1.058 2.52s1.083 2.922 1.234 3.123c.151.202 2.13 3.25 5.158 4.556 2.051.884 2.763.958 3.518.882.85-.086 2.064-.844 2.355-1.659.29-.815.29-1.514.202-1.659-.088-.146-.315-.222-.617-.373z"/></svg></div>
+                    <span class="text-xs text-gray-600" data-i18n="social.whatsapp">WhatsApp</span>
+                </a>
+                <a href="https://x.com/zqs1qcep2uay9ef?s=21&t=oJB6mzCfgk0lUdpuDrt61w" class="flex flex-col items-center">
+                    <div class="w-12 h-12 flex items-center justify-center rounded-full bg-gray-100 mb-2"><svg class="w-5 h-5 text-gray-900" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></div>
+                    <span class="text-xs text-gray-600" data-i18n="social.x">X</span>
+                </a>
+                <a href="https://www.facebook.com/share/17kP1GqZs4/?mibextid=LQQJ4d" class="flex flex-col items-center">
+                    <div class="w-12 h-12 flex items-center justify-center rounded-full bg-[#0084FF]/10 mb-2"><svg class="w-6 h-6 text-[#0084FF]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.053 0 11.289c0 3.551 1.71 6.726 4.382 8.868v3.843l4.004-2.203c1.166.326 2.396.5 3.614.5 6.627 0 12-5.053 12-11.289S18.627 0 12 0zm1.096 15.088l-2.822-3.007-5.503 3.007 6.052-6.425 2.89 3.007 5.435-3.007-6.052 6.425z"/></svg></div>
+                    <span class="text-xs text-gray-600" data-i18n="social.messenger">Messenger</span>
+                </a>
+                <a href="https://discord.com/users/deekcloud" class="flex flex-col items-center">
+                    <div class="w-12 h-12 flex items-center justify-center rounded-full bg-[#5865F2]/10 mb-2"><svg class="w-6 h-6 text-[#5865F2]" fill="currentColor" viewBox="0 0 24 24"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></svg></div>
+                    <span class="text-xs text-gray-600" data-i18n="social.discord">Discord</span>
+                </a>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -186,13 +378,11 @@
             toast.innerHTML = `${iconSvg} <span>${message}</span>`;
             document.body.appendChild(toast);
 
-            // Animate in
             requestAnimationFrame(() => {
                 toast.classList.remove('opacity-0', 'translate-y-[-20px]');
                 toast.classList.add('opacity-100', 'translate-y-0');
             });
 
-            // Remove after 2.5 seconds
             setTimeout(() => {
                 toast.classList.remove('opacity-100', 'translate-y-0');
                 toast.classList.add('opacity-0', 'translate-y-[-20px]');
@@ -201,15 +391,18 @@
         }
 
         function copyToClipboard(text) {
+            const lang = window.getCurrentLang ? window.getCurrentLang() : 'zh';
+            const successMsg = lang === 'zh' ? '链接已复制到剪贴板' : 'Link copied to clipboard';
+            const errorMsg = lang === 'zh' ? '复制失败' : 'Failed to copy';
+
             if (navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(text).then(() => {
-                    showToast('链接已复制到剪贴板');
+                    showToast(successMsg);
                 }).catch(err => {
-                    showToast('复制失败', true);
+                    showToast(errorMsg, true);
                     console.error('Failed to copy text: ', err);
                 });
             } else {
-                // 回退方案
                 let textArea = document.createElement("textarea");
                 textArea.value = text;
                 textArea.style.position = "fixed";
@@ -220,28 +413,31 @@
                 textArea.select();
                 try {
                     document.execCommand('copy');
-                    showToast('链接已复制到剪贴板');
+                    showToast(successMsg);
                 } catch (err) {
-                    showToast('复制失败', true);
+                    showToast(errorMsg, true);
                 }
                 textArea.remove();
             }
         }
 
-        // === 生成表格辅助函数 ===
-        function generateTable(title, data) {
+        // === 生成表格辅助函数 (支持双语) ===
+        function generateTable(title, data, lang) {
+            const nameHeader = lang === 'en' ? 'Name' : '名称';
+            const linkHeader = lang === 'en' ? 'Link' : '链接';
+
             let rows = data.map(item => `
                 <tr class="hover:bg-blue-50/20 transition-colors border-b border-gray-100 last:border-0">
                     <td class="py-4 px-6 text-[14px] text-gray-600 flex items-center min-w-[150px]">
                         <svg class="w-[15px] h-[15px] mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
-                        ${item.name}
+                        ${item.name[lang] || item.name['zh']}
                     </td>
                     <td class="py-4 px-6 text-[14px]">
                         <div class="flex items-center justify-between min-w-[300px]">
                             <a href="${item.url}" target="_blank" class="text-blue-500 hover:text-blue-600 transition-colors truncate max-w-[400px]" style="text-decoration:none;">
                                 ${item.url}
                             </a>
-                            <button onclick="copyToClipboard('${item.url}')" class="ml-4 p-1.5 rounded-full border border-gray-200 text-gray-500 hover:bg-gray-50 hover:text-primary transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 flex-shrink-0" title="复制链接">
+                            <button onclick="copyToClipboard('${item.url}')" class="ml-4 p-1.5 rounded-full border border-gray-200 text-gray-500 hover:bg-gray-50 hover:text-primary transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 flex-shrink-0" title="${lang === 'en' ? 'Copy Link' : '复制链接'}">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
                             </button>
                         </div>
@@ -255,8 +451,8 @@
                     <table class="w-full text-left border-collapse min-w-[600px]">
                         <thead>
                             <tr class="bg-[#f8fafc] border-b border-gray-100">
-                                <th class="py-3 px-6 text-sm font-semibold text-gray-500 w-1/3">名称</th>
-                                <th class="py-3 px-6 text-sm font-semibold text-gray-500">链接</th>
+                                <th class="py-3 px-6 text-sm font-semibold text-gray-500 w-1/3">${nameHeader}</th>
+                                <th class="py-3 px-6 text-sm font-semibold text-gray-500">${linkHeader}</th>
                             </tr>
                         </thead>
                         <tbody>${rows}</tbody>
@@ -267,31 +463,30 @@
 
         const cloudData = {
             aliyun: [
-                { name: "阿里云国际版", url: { index: "https://home.console.alibabacloud.com", privacy: "https://www.alibabacloud.com/help/zh/legal/latest/privacy-policy", terms: "https://www.alibabacloud.com/help/en/advisor/latest/terms-of-service", sla: "https://www.alibabacloud.com/help/en/legal/latest/product-sla" } },
-                { name: "阿里云中国站", url: { index: "https://homenew.console.aliyun.com", privacy: "https://help.aliyun.com/document_detail/2705226.html", terms: "https://help.aliyun.com/document_detail/67314.html", sla: "https://help.aliyun.com/document_detail/56773.html" } }
+                { name: { zh: "阿里云国际版", en: "Alibaba Cloud (Intl)" }, url: { index: "https://home.console.alibabacloud.com", privacy: "https://www.alibabacloud.com/help/zh/legal/latest/privacy-policy", terms: "https://www.alibabacloud.com/help/en/advisor/latest/terms-of-service", sla: "https://www.alibabacloud.com/help/en/legal/latest/product-sla" } },
+                { name: { zh: "阿里云中国站", en: "Alibaba Cloud (CN)" }, url: { index: "https://homenew.console.aliyun.com", privacy: "https://help.aliyun.com/document_detail/2705226.html", terms: "https://help.aliyun.com/document_detail/67314.html", sla: "https://help.aliyun.com/document_detail/56773.html" } }
             ],
             tencent: [
-                { name: "腾讯云国际版", url: { index: "https://console.tencentcloud.com", privacy: "https://www.tencentcloud.com/document/product/301/17345", terms: "https://www.tencentcloud.com/document/product/301/9248", sla: "https://www.tencentcloud.com/document/product/301/12905" } },
-                { name: "腾讯云中国站", url: { index: "https://console.cloud.tencent.com", privacy: "https://cloud.tencent.com/document/product/301/11470", terms: "https://cloud.tencent.com/document/product/301/1967", sla: "https://cloud.tencent.com/document/product/301/103169" } }
+                { name: { zh: "腾讯云国际版", en: "Tencent Cloud (Intl)" }, url: { index: "https://console.tencentcloud.com", privacy: "https://www.tencentcloud.com/document/product/301/17345", terms: "https://www.tencentcloud.com/document/product/301/9248", sla: "https://www.tencentcloud.com/document/product/301/12905" } },
+                { name: { zh: "腾讯云中国站", en: "Tencent Cloud (CN)" }, url: { index: "https://console.cloud.tencent.com", privacy: "https://cloud.tencent.com/document/product/301/11470", terms: "https://cloud.tencent.com/document/product/301/1967", sla: "https://cloud.tencent.com/document/product/301/103169" } }
             ],
             huawei: [
-                { name: "华为云国际版", url: { index: "https://console-intl.huaweicloud.com", privacy: "https://www.huaweicloud.com/intl/en-us/securecenter/privacy.html", terms: "https://www.huaweicloud.com/intl/en-us/declaration-sg/sa_cua.html", sla: "https://www.huaweicloud.com/intl/en-us/declaration/sla.html" } },
-                { name: "华为云中国站", url: { index: "https://console.huaweicloud.com", privacy: "https://www.huaweicloud.com/declaration/sa_prp.html", terms: "https://www.huaweicloud.com/declaration/hcpn_eula_computing.html", sla: "https://www.huaweicloud.com/declaration/sla.html" } }
+                { name: { zh: "华为云国际版", en: "Huawei Cloud (Intl)" }, url: { index: "https://console-intl.huaweicloud.com", privacy: "https://www.huaweicloud.com/intl/en-us/securecenter/privacy.html", terms: "https://www.huaweicloud.com/intl/en-us/declaration-sg/sa_cua.html", sla: "https://www.huaweicloud.com/intl/en-us/declaration/sla.html" } },
+                { name: { zh: "华为云中国站", en: "Huawei Cloud (CN)" }, url: { index: "https://console.huaweicloud.com", privacy: "https://www.huaweicloud.com/declaration/sa_prp.html", terms: "https://www.huaweicloud.com/declaration/hcpn_eula_computing.html", sla: "https://www.huaweicloud.com/declaration/sla.html" } }
             ],
             intl: [
-                { name: "Google Cloud", url: { index: "https://console.cloud.google.com", privacy: "https://cloud.google.com/terms/cloud-privacy-notice", terms: "https://cloud.google.com/terms/", sla: "https://cloud.google.com/terms/sla" } },
-                { name: "AWS", url: { index: "https://aws.amazon.com/console", privacy: "https://aws.amazon.com/cn/privacy/", terms: "https://aws.amazon.com/cn/privacy/", sla: "https://aws.amazon.com/cn/legal/service-level-agreements/" } }
+                { name: { zh: "Google Cloud", en: "Google Cloud" }, url: { index: "https://console.cloud.google.com", privacy: "https://cloud.google.com/terms/cloud-privacy-notice", terms: "https://cloud.google.com/terms/", sla: "https://cloud.google.com/terms/sla" } },
+                { name: { zh: "AWS", en: "AWS" }, url: { index: "https://aws.amazon.com/console", privacy: "https://aws.amazon.com/cn/privacy/", terms: "https://aws.amazon.com/cn/privacy/", sla: "https://aws.amazon.com/cn/legal/service-level-agreements/" } }
             ]
         };
 
-        // === 数据源配置 ===
+        // === 数据源配置 (双语) ===
         const docData = {
             'home': {
-                content: `
+                zh: `
                     <div class="mb-8">
                         <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight mb-2">文档中心</h1>
                     </div>
-                    
                     <div class="bg-blue-50/40 border border-blue-100 rounded-xl p-6 mb-10 flex items-start space-x-4">
                         <div class="p-2 bg-white rounded-full shadow-sm text-primary flex-shrink-0 mt-0.5">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -301,7 +496,6 @@
                             <p class="!mb-0 text-sm text-gray-600">您可以在这里查找与 DeekCloud 产品和服务相关的所有文档资料。请从左侧导航栏选择您需要的文档类别。</p>
                         </div>
                     </div>
-                    
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <a href="#privacy" class="block p-6 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-primary/30 transition-all group">
                             <h4 class="font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors text-lg">隐私协议</h4>
@@ -312,10 +506,34 @@
                             <p class="text-sm text-gray-500 group-hover:text-primary/80 transition-colors">查看使用我们服务的条款和条件</p>
                         </a>
                     </div>
+                `,
+                en: `
+                    <div class="mb-8">
+                        <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight mb-2">Document Center</h1>
+                    </div>
+                    <div class="bg-blue-50/40 border border-blue-100 rounded-xl p-6 mb-10 flex items-start space-x-4">
+                        <div class="p-2 bg-white rounded-full shadow-sm text-primary flex-shrink-0 mt-0.5">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-gray-900 !mt-0 !mb-1.5">Welcome to the Document Center</h3>
+                            <p class="!mb-0 text-sm text-gray-600">Here you can find all documents and materials related to DeekCloud products and services. Please select the document category you need from the left navigation bar.</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <a href="#privacy" class="block p-6 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-primary/30 transition-all group">
+                            <h4 class="font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors text-lg">Privacy Policy</h4>
+                            <p class="text-sm text-gray-500 group-hover:text-primary/80 transition-colors">Learn how we collect, use, and protect your personal information.</p>
+                        </a>
+                        <a href="#user-agreement" class="block p-6 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-primary/30 transition-all group">
+                            <h4 class="font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors text-lg">User Agreement</h4>
+                            <p class="text-sm text-gray-500 group-hover:text-primary/80 transition-colors">Review the terms and conditions for using our services.</p>
+                        </a>
+                    </div>
                 `
             },
             'privacy': {
-                content: `
+                zh: `
                     <h1 class="text-3xl font-bold text-gray-900 mb-4">隐私政策</h1>
                     <p class="text-sm text-gray-500 mb-8 flex space-x-6"><span class="bg-gray-100 px-3 py-1 rounded-md">更新日期：2025年11月30日</span></p> 
                     <p><span class="bg-blue-50 text-blue-700 px-3 py-1 rounded-md">生效日期：2025年5月5日</span></p>
@@ -369,7 +587,7 @@
                     </ul>
 
                     <h4>2.6 储存位置：</h4>
-                    <p>个人信息储存于中国境内服务器。</p>
+                    <p>个人信息储存于新加坡服务器。</p>
                     
                     <h4>2.7 储存期限：</h4>
                     <ul>
@@ -422,19 +640,118 @@
 
                     <h2>六、您如何管理个人信息</h2>
                     <p>您有权在平台技术服务允许的范围内查阅、更正、要求删除或注销账户。注销后除法律法规规定外，我们将停止提供服务并删除相关个人信息。</p>
+                `,
+                en: `
+                    <h1 class="text-3xl font-bold text-gray-900 mb-4">Privacy Policy</h1>
+                    <p class="text-sm text-gray-500 mb-8 flex space-x-6"><span class="bg-gray-100 px-3 py-1 rounded-md">Last Updated: November 30, 2025</span></p> 
+                    <p><span class="bg-blue-50 text-blue-700 px-3 py-1 rounded-md">Effective Date: May 5, 2025</span></p>
                     
-                    <h2>七、联系我们</h2>
-                    <p>如果您对本政策有任何问题，请通过以下方式联系我们（15个工作日内处理）：</p>
+                    <div class="bg-blue-50/50 border-l-4 border-primary p-4 rounded-r-lg mb-8 text-sm text-gray-700">
+                        <strong class="text-gray-900 block mb-1">Notice</strong>
+                        Dear DeekCloud user, we deeply understand the importance of personal information to you. Our platform is committed to protecting your privacy and ensuring that you enjoy full personal information protection rights when using our services. In accordance with applicable laws and regulations, we have formulated this Privacy Policy (hereinafter referred to as "this Policy"). Please read it carefully, especially the provisions regarding the collection, use, storage, sharing, and protection of personal information.
+                    </div>
+
+                    <h2>1. Scope of Application</h2>
+                    <h3>1.1 Service Scope</h3>
+                    <p>This Policy applies to all services you use through our platform, including but not limited to registration, recharges, and obtained cloud services. Using the platform's services means you agree to the processing of personal information in accordance with the provisions of this Policy.</p>
+
+                    <h3>1.2 Boundaries of Responsibility</h3>
+                    <p>The platform acts as an independent third-party agency service provider, only providing discount information and account management services for original cloud services. The cloud services you obtain through the platform are actually provided directly by the corresponding cloud service providers (hereinafter referred to as the "Original Providers"), including but not limited to Alibaba Cloud, Alibaba Cloud International, Tencent Cloud, Tencent Cloud International, Huawei Cloud, Huawei Cloud International, Amazon Web Services (AWS), Google Cloud Platform (GCP), Microsoft Azure, etc. The platform will not access, store, or process this data, including but not limited to obtaining relevant data through API interfaces, log scraping, database mirroring, or any other technical means.</p>
+                    <p>The privacy policies and data processing rules of the above-mentioned Original Providers are independent of this Policy and must be reviewed and complied with by you separately.</p>
+
+                    <h3>1.3 Disclaimer</h3>
+                    <p>This Policy does not apply to products or services provided by Original Providers or other third parties. You should confirm and comply with the privacy terms of such third parties on your own. The platform does not assume any form of guarantee or joint liability for the content and execution of third-party privacy policies.</p>
+                    <p>For products and services of Original Providers or other third parties that you choose to use on your own, the responsibility for privacy protection is entirely borne independently by the third party, and the platform does not assume any data security liability arising from third-party services.</p>
+
+                    <h2>2. How We Collect and Use Your Personal Information</h2>
+                    <h3>(I) Collection and Purpose of Basic Information</h3>
+                    <h4>2.1 Account Registration and Real-name Authentication</h4>
+                    <p>Registration Information: Name, mobile phone number, email address, ID number (if applicable), enterprise information (if applicable).</p>
+                    <p>Purpose: To complete the activation of the Original Provider account, for identity verification required to fulfill anti-money laundering compliance obligations essential to the platform service contract, and for platform service identity verification.</p>
+                    <p>Protection of Sensitive Information: The platform promises to use sensitive information only for the purpose of fulfilling anti-money laundering obligations and real-name authentication, and protects it using encryption technology. Without your separate consent, it will not be used for other purposes (such as marketing or third-party cooperation).</p>
+                    <p>Consequences of Refusal: If you refuse to provide necessary information, you will not be able to use the core functions of the platform.</p>
+                    
+                    <h4>2.2 Transactions and Recharges</h4>
+                    <p>Information Collected: Recharge records, order numbers, payment accounts (such as bank card numbers, third-party payment vouchers).</p>
+                    <p>Purpose: To process capital flows, issue invoices, and resolve disputes.</p>
+
+                    <h4>2.3 Customer Service</h4>
+                    <p>We retain communication records (such as work orders, call recordings) and feedback content for service quality improvement. They will not be used for marketing or other unauthorized purposes.</p>
+                    <p>Service Usage Records: Includes information about the Original Provider services you have activated through this platform (such as account information for cloud service providers like AWS, Alibaba Cloud, etc.), used to analyze your usage habits, optimize user experience, and improve service quality. For example: after de-identification, analyzing the types of cloud services you have activated to recommend better-matching packages (the platform does not collect or process any business data content you upload or generate in the cloud services you use). The intellectual property rights of the analysis results belong to the platform.</p>
+
+                    <h3>(II) Collection and Purpose of Additional Information</h3>
+                    <h4>2.4 Security and Risk Control</h4>
+                    <p>Automatically Collected: Device information (IP address, device model, operating system), log data (access time, operational behavior).</p>
+                    <p>Purpose: To detect abnormal logins and prevent fraud risks.</p>
+
+                    <h3>(III) Circumstances Where Authorization is Not Required</h3>
+                    <h4>2.5 According to laws and regulations, the platform may process information without your consent in the following circumstances:</h4>
                     <ul>
-                        <li>客服电话：4006-737-595</li>
-                        <li>电子邮件：info@deekcloud.com</li>
-                        <li>在线客服：www.deekcloud.com</li>
-                        <li>个人信息保护负责人邮箱：junson@deekcloud.com</li>
+                        <li>Disclosing information according to mandatory requirements of laws, regulations, administrative, or judicial authorities (including but not limited to cooperating with regulatory inspections, administrative law enforcement, etc.).</li>
+                        <li>Disclosure necessary to protect the legitimate rights and interests of the platform and its users, public safety, or the life and property safety of others.</li>
+                        <li>Processing legally publicly available information (such as enterprise public information).</li>
+                        <li>Data processing based on the needs of academic research or public interest, provided it has been anonymized and cannot be recovered, does not require further authorization.</li>
+                        <li>When preventing risks such as scams and fraud.</li>
                     </ul>
+
+                    <h4>2.6 Storage Location:</h4>
+                    <p>Personal information is stored on servers in Singapore.</p>
+                    
+                    <h4>2.7 Storage Period:</h4>
+                    <ul>
+                        <li>The storage period is limited to the time necessary to achieve the purposes described in this Policy (e.g., during the life of the account), unless a longer period is required by law. Different categories of information may be retained for different periods based on business needs and legal requirements.</li>
+                        <li>Account registration information is saved during the account's life; transaction records, contracts, orders, etc., must be retained for 5 years according to law, and will be deleted or anonymized after expiration.</li>
+                        <li>If the platform ceases operations, it will promptly delete or anonymize the personal information held and notify you via announcement or email.</li>
+                    </ul>
+
+                    <h2>3. How We Share and Transfer Your Personal Information</h2>
+                    <h3>3.1 Entrusted Processing</h3>
+                    <ul>
+                        <li>The platform may provide your personal information to third-party service providers (such as payment institutions, customer service system providers), limited to necessary operations such as payment settlement and identity verification.</li>
+                        <li>The platform will require the aforementioned third parties to comply with strict data protection obligations, prohibit the use of your personal information beyond the scope, and ensure the security of your personal information.</li>
+                        <li>If a third-party service provider violates data protection obligations, the platform may be exempted from the resulting legal liabilities provided it has fulfilled its supplier compliance review obligations.</li>
+                    </ul>
+
+                    <h3>3.2 External Sharing</h3>
+                    <p><strong>Sharing Principles:</strong> Your personal information will not be shared unless your explicit consent is obtained or laws and regulations dictate otherwise. For the sharing of sensitive personal information such as biometrics and financial accounts, unless otherwise provided by laws and regulations, the user's separate written consent must be obtained.</p>
+                    <p><strong>Sharing Scenarios:</strong></p>
+                    <ul>
+                        <li><strong>Cloud Service Providers:</strong> To assist in activating the Original Provider's cloud services, necessary registration information must be provided to the Original Provider. This is limited to the basic registration information essential for the user's first activation of the service, and each sharing requires separate user authorization.</li>
+                        <li><strong>Payment Institutions:</strong> To complete order payments, refunds, and fund settlements, we may share necessary transaction information with authorized payment service providers, including payment accounts, order amounts, verification information, etc.</li>
+                        <li><strong>Operational Support:</strong> We may entrust third parties to provide services such as call centers, ticket processing, system O&M, security monitoring, etc., and share information within a necessary scope to ensure service quality and operational efficiency.</li>
+                    </ul>
+
+                    <h3>3.3 Third-party Transfers</h3>
+                    <p><strong>Transfer Principles:</strong> In principle, personal information is not transferred.</p>
+                    <p><strong>Exceptions:</strong> In the event of a change in control involving company mergers, acquisitions, bankruptcy liquidation, etc., personal information may be transferred as an asset. If such a situation occurs, the platform shall notify users via website announcement and registered email 30 days prior to the change in control. Users have the right to choose to cancel their accounts and request the deletion of information within 15 days of receiving the notification.</p>
+
+                    <h2>4. Cross-border Transfer of Personal Information</h2>
+                    <h3>4.1 User Compliance Obligations</h3>
+                    <ul>
+                        <li>Using the services of international cloud providers (such as AWS, Alibaba Cloud International, etc.) may involve cross-border data transmission.</li>
+                        <li>You are required to comply with relevant national legal requirements regarding the cross-border transfer of personal information and complete necessary approval or filing procedures.</li>
+                        <li>Users shall complete data export compliance procedures on their own. The platform may provide compliance guidelines within the scope permitted by laws and regulations, but this does not constitute legal advice or a commitment, nor does the platform assume approval obligations.</li>
+                    </ul>
+
+                    <h3>4.2 Consequences of Violations and Platform Measures</h3>
+                    <p><strong>User Responsibility:</strong> Without compliance approval, the personal information of Chinese citizens within the territory must not be provided externally through overseas cloud accounts activated via the platform.</p>
+                    <p><strong>Platform Measures:</strong> If a user is found to have violated regulations, the platform has the right to immediately suspend relevant services and reserves the right to require the user to provide compliance proof documents.</p>
+                    <p><strong>Data Protection Commitment:</strong> The platform only transmits necessary information required for account activation to the Original Provider and does not access business data generated by you in overseas cloud services.</p>
+
+                    <h2>5. Information Protection Measures</h2>
+                    <h3>5.1 Technical and Management Measures</h3>
+                    <ul>
+                        <li>Use SSL/TLS encryption technology to protect data transmission security.</li>
+                        <li>Use industry-standard security encryption technology to store user passwords and data.</li>
+                        <li>Regular penetration testing, classified management systems based on data sensitivity, employee privacy training, and granting only the minimum privileges necessary for staff to perform their jobs.</li>
+                    </ul>
+
+                    <h2>6. How You Manage Your Personal Information</h2>
+                    <p>You have the right to access, correct, request deletion, or cancel your account within the scope permitted by the platform's technical services. After cancellation, except as otherwise provided by laws and regulations, we will stop providing services and delete the relevant personal information.</p>
                 `
             },
             'user-agreement': {
-                content: `
+                zh: `
                     <h1 class="text-3xl font-bold text-gray-900 mb-4">DeekCloud 用户服务协议</h1>
                     <p class="text-sm text-gray-500 mb-8 flex space-x-6"><span class="bg-gray-100 px-3 py-1 rounded-md">更新日期：2025年12月21日</span></p>
                     <p><span class="bg-blue-50 text-blue-700 px-3 py-1 rounded-md">生效日期：2025年5月1日</span></p>
@@ -442,7 +759,7 @@
                     <div class="bg-blue-50/50 border-l-4 border-primary p-4 rounded-r-lg mb-8 text-sm text-gray-700">
                         <strong class="text-gray-900 block mb-1">提示条款</strong>
                         欢迎您使用DeekCloud产品及服务！<br>
-                        为使用本服务，您应当阅读并遵守由您与喜云（广东）云计算服务有限公司（简称"我们"或"喜云公司"）订立的《DeekCloud 用户服务协议》（简称"本协议"）。<br><br>
+                        为使用本服务，您应当阅读并遵守由您与迪克云计算服务公司（简称"我们"或"迪克云公司"）订立的《DeekCloud 用户服务协议》（简称"本协议"）。<br><br>
                         请您务必审慎阅读、充分理解本协议全部条款内容，特别是<strong>免除或者减轻我们责任、排除或者限制您的权利以及争议解决等与您有重大利害关系的条款</strong>，该类条款将可能以加粗、下划线或重要标识等合理方式提示您注意。<br><br>
                         您通过 DeekCloud 注册、使用服务或点击同意本协议的行为，视为您已阅读、理解并同意本协议及其更新版本，本协议及其更新版本自用户勾选同意并完成身份验证时生效，电子文本与纸质文本具有同等法律效力。如果您对本协议条款有任何疑问、投诉、意见和建议，欢迎与我们沟通反馈。
                     </div>
@@ -559,7 +876,7 @@
                     <p>本协议之订立、生效、解释、修订、补充、终止、执行与争议解决均适用中华人民共和国法律；如法律无相关规定的，参照商业惯例及行业惯例。</p>
 
                     <h3>6.2 管辖</h3>
-                    <p>根据《最高人民法院关于审理技术合同纠纷案件适用法律若干问题的解释》第四十三条，技术服务合同纠纷案件一般由中级以上人民法院管辖。因此，您因使用喜云产品及服务所产生及与喜云公司有关的争议，首先应通过协商解决。若协商不成，任何一方均可向喜云（广东）云计算服务有限公司住所地有管辖权的人民法院提起诉讼。注册地或主要营业地位于中国境外的用户，应提交香港国际仲裁中心（HKIAC）按照其届时有效的仲裁规则进行仲裁，仲裁费用由败诉方承担，除非仲裁庭另有裁决。因争议解决产生的其他费用（包括但不限于律师费、调查费、差旅费等），亦由败诉方承担。仲裁裁决为终局决定，对双方均有约束力。</p>
+                    <p>根据《最高人民法院关于审理技术合同纠纷案件适用法律若干问题的解释》第四十三条，技术服务合同纠纷案件一般由中级以上人民法院管辖。因此，您因使用迪克云产品及服务所产生及与迪克云公司有关的争议，首先应通过协商解决。若协商不成，任何一方均可向迪克云计算服务公司住所地有管辖权的人民法院提起诉讼。注册地或主要营业地位于中国境外的用户，应提交香港国际仲裁中心（HKIAC）按照其届时有效的仲裁规则进行仲裁，仲裁费用由败诉方承担，除非仲裁庭另有裁决。因争议解决产生的其他费用（包括但不限于律师费、调查费、差旅费等），亦由败诉方承担。仲裁裁决为终局决定，对双方均有约束力。</p>
 
                     <h3>6.3 条款有效性</h3>
                     <p>本协议任一条款被视为废止、无效或不可执行，该条件应视为可分的且并不影响本协议其余条款的有效性及可执行性。</p>
@@ -573,42 +890,210 @@
                         <li><strong>原厂控制台：</strong>指各云服务商提供的管理界面</li>
                         <li><strong>SLA：</strong>指服务等级协议,指的是整个协议,其定义了服务类型、质量以及赔付标准等各云厂商服务条款以及隐私政策</li>
                     </ul>
+                `,
+                en: `
+                    <h1 class="text-3xl font-bold text-gray-900 mb-4">DeekCloud User Service Agreement</h1>
+                    <p class="text-sm text-gray-500 mb-8 flex space-x-6"><span class="bg-gray-100 px-3 py-1 rounded-md">Last Updated: December 21, 2025</span></p>
+                    <p><span class="bg-blue-50 text-blue-700 px-3 py-1 rounded-md">Effective Date: May 1, 2025</span></p>
+
+                    <div class="bg-blue-50/50 border-l-4 border-primary p-4 rounded-r-lg mb-8 text-sm text-gray-700">
+                        <strong class="text-gray-900 block mb-1">Notice</strong>
+                        Welcome to use DeekCloud products and services!<br>
+                        To use these services, you must read and comply with the "DeekCloud User Service Agreement" (hereinafter referred to as "this Agreement") entered into by you and Dick Cloud Computing Services Company (hereinafter referred to as "we" or "Dick Cloud Company").<br><br>
+                        Please carefully read and fully understand all the terms of this Agreement, especially <strong>the terms that exempt or mitigate our liabilities, exclude or limit your rights, and dispute resolution clauses that have a significant interest with you</strong>. Such terms may be highlighted in bold, underlined, or accompanied by other significant identifiers to draw your attention.<br><br>
+                        Your registration, use of services via DeekCloud, or clicking to agree to this Agreement shall be deemed as your having read, understood, and agreed to this Agreement and its updated versions. This Agreement and its updated versions shall take effect when the user checks to agree and completes identity verification. The electronic text has the same legal effect as the paper text. If you have any questions, complaints, opinions, or suggestions regarding the terms of this Agreement, please contact us.
+                    </div>
+
+                    <h2>1. Definitions and Roles</h2>
+                    <h3>1.1 Platform Positioning</h3>
+                    <p>DeekCloud is an independent third-party agency service platform, not an official institution or affiliated company of cloud service providers such as AWS, Tencent Cloud, Alibaba Cloud, Huawei Cloud, Google Cloud, etc. (hereinafter referred to as "Original Providers"). The relationship between the two parties is a commercial cooperation. The cloud services obtained by users through this platform are provided directly by the corresponding Original Provider, and the platform only acts as an agent to assist users in establishing service relationships with the Original Provider.</p>
+                    
+                    <h3>1.2 Service Scope</h3>
+                    <p>The platform provides services such as Original Provider account activation, online recharges, promotional discounts, and multi-channel payment services. It does not involve users' cloud resource management, data operations, or technical support.</p>
+
+                    <h3>1.3 Definition of User</h3>
+                    <p>A user is an adult individual/enterprise over 18 years old who registers or uses services through this platform, must possess full civil capacity, and accepts the constraints of this Agreement and the Original Provider's service terms.</p>
+
+                    <h3>1.4 Original Provider (Cloud Service Provider)</h3>
+                    <p>Includes but is not limited to Alibaba Cloud, Alibaba Cloud International, Tencent Cloud, Tencent Cloud International, Huawei Cloud, Huawei Cloud International, Amazon Web Services (AWS), Google Cloud Platform (GCP), Microsoft Azure (Azure), etc.</p>
+
+                    <h2>2. Service Content and Permission Boundaries</h2>
+                    <h3>2.1 Account Activation</h3>
+                    <p>Users can self-activate Original Provider accounts through this platform. The platform only provides the registration portal and preliminary information review. Final account activation requires real-name authentication and compliance review by the Original Provider. The platform strictly complies with user information management regulations, does not store or manage users' login credentials and sensitive data in the Original Provider's console, ensuring the security and privacy of user information. If a user provides false, expired, or someone else's identity information, or fails the Original Provider's real-name authentication, the platform has the right to refuse registration or terminate services at any time, relevant fees will not be refunded, and the situation may be reported to regulatory authorities/Original Providers (to fulfill legal obligations).</p>
+                    <p>According to relevant laws and regulations of various regions and countries, users must provide true identity information according to the Original Provider's policies (including but not limited to personal name, ID number, contact information, or enterprise name, business license, legal representative information, etc.). All notices under this Agreement shall be served via the user's registered email, site message, or verified contact phone number. If served electronically, it is deemed served once it enters the recipient's data message receiving system. User information changes must be updated within three working days, otherwise the adverse consequences shall be borne by the user.</p>
+
+                    <h3>2.2 Recharges and Resource Allocation</h3>
+                    <p>User recharge funds will be allocated to the corresponding Original Provider account. The arrival time is subject to the Original Provider's system records. Users are advised to confirm promptly after recharging. In case of abnormalities, users need to submit a text explanation and payment voucher via the platform system and provide feedback within 24 hours. After the user submits complete recharge vouchers, the platform shall initiate a review procedure within 72 hours and provide real-time updates via online chat software or email. If unresolved overdue, the disputed amount shall be refunded first. If an incorrect recharge occurs due to the user's operational error, it should be handled in the Original Provider's system. The platform only provides information transfer services and does not promise processing results. If funds have not arrived overdue, you should immediately suspend operations and contact customer service (direct links to Original Provider consoles). The platform can assist users with reconciliation and retain communication records for reference.</p>
+                    <p>Resource Management Permissions: Users need to log into the Original Provider's console themselves to complete resource allocation, permission settings, and service enablement. The platform technically does not possess and will never obtain system permissions to operate users' cloud resources in any form.</p>
+
+                    <h3>2.3 Data Privacy and Security</h3>
+                    <h4>2.3.1 Cross-border Data Transfer Rules</h4>
+                    <ul>
+                        <li>For users within mainland China transmitting data to overseas cloud providers, the user must independently ensure compliance with all applicable legal procedures for the cross-border transfer of personal information. The platform does not assume approval obligations and only provides general compliance guidance within the scope permitted by laws and regulations. Users must not provide personal information of Chinese citizens to overseas cloud accounts activated via the platform without completing necessary legal cross-border data compliance procedures. The platform assumes no assistance obligation in this regard but may provide general compliance guidelines. The platform reserves the right to suspend relevant services upon learning of a user's potential violation of data export regulations.</li>
+                        <li>In the event of a user violating data security obligations, the platform has the right to demand a written rectification report, and services will only be restored after confirmation of compliance by a third-party professional institution.</li>
+                        <li>Users violating cross-border transmission regulations such as data export security assessments and standard contracts for personal information export must not only immediately cease the breach but also compensate the platform for all losses suffered, including but not limited to: fines and confiscation of illegal income imposed by administrative organs; compliance audit fees arising from regulatory inspections; reasonable expenses such as attorney fees and notarization fees paid by the platform to respond to regulatory investigations; and technical processing costs incurred for data repatriation.</li>
+                        <li>EU Users: Must comply with [GDPR Compliance Statement].</li>
+                        <li>California Users: Subject to [CCPA Data Rights].</li>
+                        <li>Other Regions: Handled according to the original service provider's DPA.</li>
+                    </ul>
+                    <p><strong>Important Warning:</strong> Processing personal information of Chinese citizens through international cloud providers may trigger cross-border transmission regulatory requirements stipulated in Chapters 3 and 5 of the Personal Information Protection Law of the People's Republic of China.</p>
+
+                    <h4>2.3.2</h4>
+                    <p>Real-name information collected by the platform is solely used for account activation and anti-money laundering compliance. Users authorize the platform to share their real-name information with the Original Provider for compliance review. The user's cloud data is managed directly by the cloud service provider. The platform has no technical ability to access, store, or back up users' cloud data (including API keys and stored content). If a third party pursues the platform for liability due to a user's intent or gross negligence (including but not limited to intentionally providing false information, continuing to use an account knowing it has been stolen, circumventing platform risk control rules, etc.), the platform reserves the right to recover damages from the user.</p>
+                    <p>The platform uses SSL/TLS encryption technology to guarantee the security of user data transmission, but data storage and security are the responsibility of the cloud service provider.</p>
+
+                    <h4>2.3.3</h4>
+                    <p>The platform complies with its formulated "Privacy Policy" regarding the user personal information it collects and processes (such as registration data, real-name authentication info, recharge transaction info, etc.). Data generated or hosted during the Original Provider's cloud service is subject to the cloud provider's privacy policy.</p>
+
+                    <h4>2.3.4</h4>
+                    <p>Users must ensure that all data they upload, store, or process complies with the laws and regulations of China and the country/region where the target cloud service provider is located. The platform bears no obligation to review the legality, security, or usage purpose of user data, but reserves the right to cooperate with authorized agencies' lawful investigations. Any legal liabilities, economic losses, or other consequences resulting from unlawful or non-compliant use of data by the user are borne entirely by the user, and the platform assumes no joint liability.</p>
+
+                    <h4>2.3.5</h4>
+                    <p>Users commit not to use this platform or associated cloud service provider accounts to commit any acts violating the "Cybersecurity Law of the People's Republic of China," "Data Security Law of the People's Republic of China," "Personal Information Protection Law of the People's Republic of China," and related judicial interpretations, including but not limited to:</p>
+                    <ul>
+                        <li>Using cloud resources to engage in illegal fund-raising, gambling, fraud, and other illegal and criminal activities;</li>
+                        <li>Bypassing the security protection measures or technical restrictions of cloud service providers;</li>
+                        <li>Using platform services to circumvent compliance requirements such as real-name authentication and identity verification.</li>
+                    </ul>
+                    <p>Matters not covered by this Agreement shall follow the cloud service provider's privacy policy. If the Original Provider's policy conflicts with this Agreement, this Agreement shall prevail, unless otherwise mandated by law.</p>
+
+                    <h2>3. User Responsibilities and Obligations</h2>
+                    <h3>3.1 Compliance Requirements</h3>
+                    <p>Users must ensure that registration information is true and valid, and cooperate with the Original Provider to complete secondary real-name authentication (e.g., KYC, enterprise qualification verification). If a user fails real-name authentication three consecutive times, an account freeze mechanism will be triggered.</p>
+                    <p><strong>Prohibited Actions:</strong> To implement the requirements of anti-money laundering, anti-terrorist financing, and foreign exchange management regulations, engaging in illegal activities through this platform, abusing Original Provider services, or violating platform risk control rules (such as false recharges, arbitrage, etc.) is prohibited. For single recharge amounts exceeding the equivalent of 50,000 USD or frequent abnormal recharge transactions, the platform reserves the right to suspend services and report to regulatory authorities in accordance with the law (frequent abnormal recharges refer to abnormally dense recharges on a single day or funding sources/purposes that are obviously inconsistent with the user's business situation, etc.).</p>
+
+                    <h3>3.2 Assumption of Risk</h3>
+                    <p>Users must independently bear all losses caused by Original Provider service failures, personal configuration errors, or security vulnerabilities. The platform assumes no joint liability for this.</p>
+                    <p>Users should properly keep Original Provider accounts and passwords. Losses caused by leaks are unrelated to the platform.</p>
+
+                    <h2>4. Platform Liability and Disclaimer</h2>
+                    <h3>4.1 Service Support</h3>
+                    <p>The platform shall maintain the recharge system in accordance with general industry standards, and is responsible for ensuring the authenticity of promotional activities and the efficiency of account activation.</p>
+                    <p>If changes in the Original Provider's services (such as price adjustments, product discontinuation) may affect platform services, the platform shall notify users in a reasonable manner after learning of major changes from the Original Provider, and inform users of new service solutions or refund channels for remaining funds. Users should pay timely attention to platform announcements.</p>
+
+                    <h3>4.2 Disclaimer Clauses</h3>
+                    <p><strong>Non-commitment Content:</strong> The platform does not guarantee the availability, security, or compatibility of Original Provider services, nor is it responsible for their technical failures, data leaks, or policy adjustments. Any losses incurred by users due to Original Provider service quality issues, policy changes, or technical failures shall be negotiated and resolved directly between the user and the Original Provider. The platform bears no compensation responsibility. The platform does not commit to the quality indicators of Original Provider services. Users acknowledge and accept the SLA differences between different Original Providers and shall not require the platform to unify service standards; specific SLAs are subject to the announcements of each cloud provider. At the same time, service providers should take measures to protect the security of user data, prevent unauthorized access and disclosure, and ensure the reliability and stability of services. For availability commitments of each cloud provider, please refer to the [Provider Name - SLA Comparison Table] or inquire via the AI Assistant.</p>
+                    <p><strong>Force Majeure:</strong> The platform is exempt from liability for service interruptions caused by natural disasters, cyber attacks, or policy/regulatory enforcement.</p>
+                    <p>If a user commits acts that violate laws, regulations, or Original Provider service terms via platform service channels, such as:</p>
+                    <ul>
+                        <li>Using cloud resources to conduct cyber attacks, spread malware, or illegal information;</li>
+                        <li>Storing, transmitting, or processing data that violates national laws and regulations (e.g., invading others' privacy, copyright infringing content, etc.);</li>
+                        <li>Violating the cloud service provider's service terms or security policies;</li>
+                    </ul>
+                    <p>The platform reserves the right to take the following measures:</p>
+                    <ul>
+                        <li>Immediately freeze the user's account and suspend subsequent services;</li>
+                        <li>Report the violations to regulatory authorities and the Original Provider;</li>
+                        <li>Cooperate with law enforcement investigations. The platform bears no direct or indirect compensation responsibility for legal disputes, administrative penalties, or civil liabilities arising from user actions, unless the platform has acted with intent or gross negligence or violated statutory management obligations.</li>
+                    </ul>
+                    <p><strong>No-fault Exemption:</strong></p>
+                    <p>The platform does not assume joint liability in the following circumstances:</p>
+                    <ul>
+                        <li>Users committing violations through non-platform channels (such as directly contacting Original Provider customer service);</li>
+                        <li>Users registering or recharging using stolen identity information, where the platform has fulfilled basic real-name authentication obligations;</li>
+                        <li>Technical defects or policy changes in the Original Provider's service itself (e.g., AWS suddenly adjusting API permission rules);</li>
+                        <li>The platform reserves the right of retrospective tracking of user behavior but assumes no responsibility for ex-ante prevention;</li>
+                        <li>Users intentionally providing false information, knowingly continuing to use a stolen account, circumventing or bypassing platform rules, etc.</li>
+                    </ul>
+                    <p>This platform is merely a third-party agency service provider and neither has nor assumes any legal responsibility for the specific operations executed by users through the Original Provider's console. Please strictly abide by the service terms of each cloud provider and local laws and regulations.</p>
+                    <p><strong>Special Note:</strong></p>
+                    <p>The platform does not have the technical capability nor the legal obligation to monitor all cloud operations of users in real-time. It only bears responsibility for the compliance of the registration and recharge processes via this platform. Users should strictly comply with applicable laws and regulations and the usage policies of cloud service providers. Consequences arising from users' own actions are borne independently by them.</p>
+
+                    <h2>5. Miscellaneous Provisions</h2>
+                    <h3>5.1 Agreement Updates</h3>
+                    <p>The platform has the right to amend this Agreement based on business or compliance requirements. Revisions will be notified via a prominent announcement on the platform's official website, site message, the user's registered email, or verified contact phone number. Failure to raise written objections within 15 days of the announcement or continued use implies acceptance of the new terms.</p>
+                    <div class="bg-gray-50 border border-gray-200 p-4 rounded-lg mt-4">
+                        <p><strong>Key Reminders</strong></p>
+                        <ul>
+                            <li><strong>Permission Isolation:</strong> DeekCloud acts solely as a service agent. The rights and obligations between the user and the Original Provider are independent of this Agreement.</li>
+                            <li><strong>Operation Path:</strong> After recharging is complete, please proceed to the Original Provider's console (e.g., AWS Management Console, Alibaba Cloud International) to complete resource configuration.</li>
+                            <li><strong>Dispute Contact:</strong> For Original Provider service issues, please contact the corresponding provider's customer service directly. The platform will provide necessary assistance but holds no decision-making power.</li>
+                        </ul>
+                    </div>
+
+                    <h2>6. Applicable Law, Jurisdiction, and Others</h2>
+                    <h3>6.1 Applicable Law</h3>
+                    <p>The formation, validation, interpretation, amendment, supplementation, termination, execution, and dispute resolution of this Agreement shall be governed by the laws of the People's Republic of China; in the absence of relevant legal provisions, commercial and industry practices shall apply.</p>
+
+                    <h3>6.2 Jurisdiction</h3>
+                    <p>According to Article 43 of the "Interpretations of the Supreme People's Court on Several Issues Concerning the Application of Law in the Trial of Technology Contract Dispute Cases," technology service contract dispute cases are generally under the jurisdiction of people's courts at or above the intermediate level. Therefore, disputes arising from your use of Dick Cloud products and services and relating to Dick Cloud Company should first be resolved through negotiation. If negotiation fails, either party may file a lawsuit in a competent people's court in the jurisdiction where Dick Cloud Computing Services Company is domiciled. For users whose place of registration or principal place of business is located outside of China, the dispute shall be submitted to the Hong Kong International Arbitration Centre (HKIAC) for arbitration in accordance with its then-effective arbitration rules. The arbitration costs shall be borne by the losing party unless the arbitral tribunal rules otherwise. Other costs arising from dispute resolution (including but not limited to attorney fees, investigation fees, travel expenses, etc.) shall also be borne by the losing party. The arbitral award is final and binding on both parties.</p>
+
+                    <h3>6.3 Validity of Terms</h3>
+                    <p>If any term of this Agreement is deemed annulled, invalid, or unenforceable, that condition shall be deemed severable and shall not affect the validity and enforceability of the remaining terms of this Agreement.</p>
+
+                    <h2>Appendix: Original Provider Policy Index and Glossary</h2>
+                    <p>Note: Updates to Original Provider terms are subject to the provider's official website.</p>
+                    <p>The Original Provider policy index links are provided for reference only. The platform is not responsible for the continuous validity of the links and the accuracy of the content.</p>
+                    <p>The original service terms, privacy policies, and compliance statements referenced in this Agreement shall be subject to the latest versions on the official websites of the Original Providers at the time this Agreement is signed. Updates to Original Provider policies are not considered amendments to this Agreement.</p>
+                    <ul>
+                        <li><strong>KYC Authentication:</strong> Refers to the user identity verification process.</li>
+                        <li><strong>Original Provider Console:</strong> Refers to the management interfaces provided by various cloud service providers.</li>
+                        <li><strong>SLA:</strong> Refers to the Service Level Agreement, which defines the service type, quality, and compensation standards as per the service terms and privacy policies of each cloud provider.</li>
+                    </ul>
                 `
             },
             'cloud-console': {
-                content: `
+                zh: `
                     <h1 class="text-3xl font-bold text-gray-900 mb-8">云厂商控制台索引</h1>
-                    ${generateTable('阿里云', cloudData.aliyun.map(item => ({name: item.name, url: item.url.index})))}
-                    ${generateTable('腾讯云', cloudData.tencent.map(item => ({name: item.name, url: item.url.index})))}
-                    ${generateTable('华为云', cloudData.huawei.map(item => ({name: item.name, url: item.url.index})))}
-                    ${generateTable('国际云服务', cloudData.intl.map(item => ({name: item.name, url: item.url.index})))}
+                    \${generateTable('阿里云', cloudData.aliyun, 'zh')}
+                    \${generateTable('腾讯云', cloudData.tencent, 'zh')}
+                    \${generateTable('华为云', cloudData.huawei, 'zh')}
+                    \${generateTable('国际云服务', cloudData.intl, 'zh')}
+                `,
+                en: `
+                    <h1 class="text-3xl font-bold text-gray-900 mb-8">Cloud Provider Console Index</h1>
+                    \${generateTable('Alibaba Cloud', cloudData.aliyun, 'en')}
+                    \${generateTable('Tencent Cloud', cloudData.tencent, 'en')}
+                    \${generateTable('Huawei Cloud', cloudData.huawei, 'en')}
+                    \${generateTable('International Cloud Services', cloudData.intl, 'en')}
                 `
             },
             'cloud-privacy': {
-                content: `
+                zh: `
                     <h1 class="text-3xl font-bold text-gray-900 mb-8">云厂商隐私政策</h1>
-                    ${generateTable('阿里云', cloudData.aliyun.map(item => ({name: item.name, url: item.url.privacy})))}
-                    ${generateTable('腾讯云', cloudData.tencent.map(item => ({name: item.name, url: item.url.privacy})))}
-                    ${generateTable('华为云', cloudData.huawei.map(item => ({name: item.name, url: item.url.privacy})))}
-                    ${generateTable('国际云服务', cloudData.intl.map(item => ({name: item.name, url: item.url.privacy})))}
+                    \${generateTable('阿里云', cloudData.aliyun.map(item => ({name: item.name, url: item.url.privacy})), 'zh')}
+                    \${generateTable('腾讯云', cloudData.tencent.map(item => ({name: item.name, url: item.url.privacy})), 'zh')}
+                    \${generateTable('华为云', cloudData.huawei.map(item => ({name: item.name, url: item.url.privacy})), 'zh')}
+                    \${generateTable('国际云服务', cloudData.intl.map(item => ({name: item.name, url: item.url.privacy})), 'zh')}
+                `,
+                en: `
+                    <h1 class="text-3xl font-bold text-gray-900 mb-8">Cloud Provider Privacy Policies</h1>
+                    \${generateTable('Alibaba Cloud', cloudData.aliyun.map(item => ({name: item.name, url: item.url.privacy})), 'en')}
+                    \${generateTable('Tencent Cloud', cloudData.tencent.map(item => ({name: item.name, url: item.url.privacy})), 'en')}
+                    \${generateTable('Huawei Cloud', cloudData.huawei.map(item => ({name: item.name, url: item.url.privacy})), 'en')}
+                    \${generateTable('International Cloud Services', cloudData.intl.map(item => ({name: item.name, url: item.url.privacy})), 'en')}
                 `
             },
             'cloud-service-terms': {
-                content: `
+                zh: `
                     <h1 class="text-3xl font-bold text-gray-900 mb-8">云厂商服务协议</h1>
-                    ${generateTable('阿里云', cloudData.aliyun.map(item => ({name: item.name, url: item.url.terms})))}
-                    ${generateTable('腾讯云', cloudData.tencent.map(item => ({name: item.name, url: item.url.terms})))}
-                    ${generateTable('华为云', cloudData.huawei.map(item => ({name: item.name, url: item.url.terms})))}
-                    ${generateTable('国际云服务', cloudData.intl.map(item => ({name: item.name, url: item.url.terms})))}
+                    \${generateTable('阿里云', cloudData.aliyun.map(item => ({name: item.name, url: item.url.terms})), 'zh')}
+                    \${generateTable('腾讯云', cloudData.tencent.map(item => ({name: item.name, url: item.url.terms})), 'zh')}
+                    \${generateTable('华为云', cloudData.huawei.map(item => ({name: item.name, url: item.url.terms})), 'zh')}
+                    \${generateTable('国际云服务', cloudData.intl.map(item => ({name: item.name, url: item.url.terms})), 'zh')}
+                `,
+                en: `
+                    <h1 class="text-3xl font-bold text-gray-900 mb-8">Cloud Provider Service Terms</h1>
+                    \${generateTable('Alibaba Cloud', cloudData.aliyun.map(item => ({name: item.name, url: item.url.terms})), 'en')}
+                    \${generateTable('Tencent Cloud', cloudData.tencent.map(item => ({name: item.name, url: item.url.terms})), 'en')}
+                    \${generateTable('Huawei Cloud', cloudData.huawei.map(item => ({name: item.name, url: item.url.terms})), 'en')}
+                    \${generateTable('International Cloud Services', cloudData.intl.map(item => ({name: item.name, url: item.url.terms})), 'en')}
                 `
             },
             'cloud-sla': {
-                content: `
+                zh: `
                     <h1 class="text-3xl font-bold text-gray-900 mb-8">云厂商服务等级协议(SLA)</h1>
-                    ${generateTable('阿里云', cloudData.aliyun.map(item => ({name: item.name, url: item.url.sla})))}
-                    ${generateTable('腾讯云', cloudData.tencent.map(item => ({name: item.name, url: item.url.sla})))}
-                    ${generateTable('华为云', cloudData.huawei.map(item => ({name: item.name, url: item.url.sla})))}
-                    ${generateTable('国际云服务', cloudData.intl.map(item => ({name: item.name, url: item.url.sla})))}
+                    \${generateTable('阿里云', cloudData.aliyun.map(item => ({name: item.name, url: item.url.sla})), 'zh')}
+                    \${generateTable('腾讯云', cloudData.tencent.map(item => ({name: item.name, url: item.url.sla})), 'zh')}
+                    \${generateTable('华为云', cloudData.huawei.map(item => ({name: item.name, url: item.url.sla})), 'zh')}
+                    \${generateTable('国际云服务', cloudData.intl.map(item => ({name: item.name, url: item.url.sla})), 'zh')}
+                `,
+                en: `
+                    <h1 class="text-3xl font-bold text-gray-900 mb-8">Cloud Provider SLAs</h1>
+                    \${generateTable('Alibaba Cloud', cloudData.aliyun.map(item => ({name: item.name, url: item.url.sla})), 'en')}
+                    \${generateTable('Tencent Cloud', cloudData.tencent.map(item => ({name: item.name, url: item.url.sla})), 'en')}
+                    \${generateTable('Huawei Cloud', cloudData.huawei.map(item => ({name: item.name, url: item.url.sla})), 'en')}
+                    \${generateTable('International Cloud Services', cloudData.intl.map(item => ({name: item.name, url: item.url.sla})), 'en')}
                 `
             }
         };
@@ -620,54 +1105,66 @@
         }
 
         // 路由渲染逻辑
-        document.addEventListener('DOMContentLoaded', () => {
-            const docBody = document.getElementById('doc-body');
-            const navItems = document.querySelectorAll('.menu-item');
-
-            function renderContent() {
-                let hash = window.location.hash.substring(1);
-                if (!hash || !docData[hash]) {
-                    hash = 'home';
-                }
-
-                // 注入数据
-                const data = docData[hash];
-                
-                // 淡入淡出动画
-                docBody.style.opacity = 0;
-                setTimeout(() => {
-                    docBody.innerHTML = data.content;
-                    docBody.style.transition = 'opacity 0.3s ease-in-out';
-                    docBody.style.opacity = 1;
-                    window.scrollTo({top: 0, behavior: 'smooth'});
-                }, 150);
-
-                // 更新左侧菜单高亮状态及背景
-                navItems.forEach(item => {
-                    const itemHash = item.getAttribute('data-hash');
-                    
-                    if (itemHash === hash) {
-                        item.classList.add('bg-blue-50/80', 'text-primary');
-                        item.classList.remove('text-gray-600', 'text-gray-500');
-                        
-                        // 展开对应的父级菜单
-                        const parentContainer = item.closest('.submenu-container');
-                        if(parentContainer && !parentContainer.classList.contains('submenu-open')) {
-                            parentContainer.classList.add('submenu-open');
-                        }
-                    } else {
-                        item.classList.remove('bg-blue-50/80', 'text-primary');
-                        if (item.classList.contains('py-3')) { // 顶级菜单
-                            item.classList.add('text-gray-600');
-                        } else {
-                            item.classList.add('text-gray-500');
-                        }
-                    }
-                });
+        function renderContent() {
+            let hash = window.location.hash.substring(1);
+            if (!hash || !docData[hash]) {
+                hash = 'home';
             }
 
+            const lang = (window.getCurrentLang && window.getCurrentLang()) || 'zh';
+
+            // 动态解析带有 template literals 的内容 (用于表格生成)
+            let contentString = docData[hash][lang] || docData[hash]['zh'];
+            
+            // 简单实现 eval 效果替换表格生成
+            const parsedContent = contentString.replace(/\$\{generateTable\((.*?)\)\}/g, (match, p1) => {
+                // p1 类似: "'阿里云', cloudData.aliyun, 'zh'"
+                // 使用 Function 动态执行
+                try {
+                    return new Function('generateTable', 'cloudData', `return generateTable(${p1})`)(generateTable, cloudData);
+                } catch (e) {
+                    console.error('Table generation failed:', e);
+                    return '';
+                }
+            });
+
+            const docBody = document.getElementById('doc-body');
+            
+            docBody.style.opacity = 0;
+            setTimeout(() => {
+                docBody.innerHTML = parsedContent;
+                docBody.style.transition = 'opacity 0.3s ease-in-out';
+                docBody.style.opacity = 1;
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            }, 150);
+
+            // 更新左侧菜单高亮状态
+            const navItems = document.querySelectorAll('.menu-item');
+            navItems.forEach(item => {
+                const itemHash = item.getAttribute('data-hash');
+                if (itemHash === hash) {
+                    item.classList.add('bg-blue-50/80', 'text-primary');
+                    item.classList.remove('text-gray-600', 'text-gray-500');
+                    const parentContainer = item.closest('.submenu-container');
+                    if(parentContainer && !parentContainer.classList.contains('submenu-open')) {
+                        parentContainer.classList.add('submenu-open');
+                    }
+                } else {
+                    item.classList.remove('bg-blue-50/80', 'text-primary');
+                    if (item.classList.contains('py-3')) {
+                        item.classList.add('text-gray-600');
+                    } else {
+                        item.classList.add('text-gray-500');
+                    }
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
             renderContent();
             window.addEventListener('hashchange', renderContent);
+            // 监听语言切换，实时重新渲染文档内容
+            window.addEventListener('languageChanged', renderContent);
         });
     </script>
 </body>

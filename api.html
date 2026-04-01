@@ -43,7 +43,14 @@
             100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); }
         }
         .animate-node { animation: node-pulse 2s infinite; }
+        
+        /* 避免移动端底部安全区被遮挡 */
+        body { padding-bottom: env(safe-area-inset-bottom); }
     </style>
+
+    <script src="js/lang.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/mobile.js"></script>
 </head>
 <body class="text-gray-800 font-sans antialiased relative flex flex-col min-h-screen bg-[#f8fafc]">
 
@@ -54,54 +61,83 @@
     </div>
 
     <nav class="sticky top-0 z-50 bg-white/60 backdrop-blur-md border-b border-white/50 shadow-sm transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-               <div class="flex-shrink-0 flex items-center cursor-pointer">
-                    <img src="images/logo.svg" 
-                        alt="DeekCloud Logo" 
-                        class="w-auto object-contain"
-                        style="height: clamp(10px, 5vw, 20px);">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+            <div class="flex justify-between items-center h-16 relative z-20">
+                <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="window.location.href='index.html'">
+                    <img src="images/logo.svg" alt="DeekCloud Logo" class="w-auto object-contain" style="height: clamp(10px, 5vw, 20px);">
                 </div>
                 
                 <div class="hidden md:flex space-x-8 h-full">
-                    <a href="index.html" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-900 hover:border-gray-300 transition-all duration-300">首页</a>
-                    <a href="api.html" class="inline-flex items-center px-1 pt-1 border-b-2 border-primary text-sm font-medium text-primary transition-all duration-300">大模型API</a>
-                    <a href="products.html" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-900 hover:border-gray-300 transition-all duration-300">产品与方案</a>
-                    <a href="question.html" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-900 hover:border-gray-300 transition-all duration-300">常见问题</a>
+                    <a href="index.html" data-i18n="nav.home" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-900 hover:border-gray-300 transition-all duration-300" style="text-decoration: none;">首页</a>
+                    <a href="api.html" data-i18n="nav.api" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-900 hover:border-gray-300 transition-all duration-300" style="text-decoration: none;">大模型API</a>
+                    <a href="products.html" data-i18n="nav.products" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-900 hover:border-gray-300 transition-all duration-300" style="text-decoration: none;">产品与方案</a>
+                    <a href="question.html" data-i18n="nav.faq" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-900 hover:border-gray-300 transition-all duration-300" style="text-decoration: none;">常见问题</a>
                 </div>
-                
-                <div class="hidden md:flex items-center space-x-2 text-primary font-semibold">
-                    <svg fill="none" height="32" viewBox="0 0 24 24" width="32" xmlns="http://www.w3.org/2000/svg" style="flex: 0 0 auto; line-height: 1;"><title>Telegram</title><defs><linearGradient id="tgGradient" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#37AEE2"></stop><stop offset="100%" stop-color="#1E96C8"></stop></linearGradient></defs><circle cx="12" cy="12" r="12" fill="url(#tgGradient)"></circle><path d="M5.49 11.66l11.77-4.54c.54-.21 1.04.14.86.88l-2.01 9.49c-.15.68-.56.85-1.13.53l-3.07-2.26-1.48 1.43c-.16.16-.3.3-.61.3l.22-3.13 5.71-5.16c.25-.22-.05-.35-.39-.13l-7.06 4.44-3.04-.95c-.66-.21-.67-.66.14-.97z" fill="white"></path></svg>
-                    <span>@deekcloud</span>
+
+                <div class="hidden md:flex items-center space-x-4 text-primary font-semibold">
+                    <button onclick="toggleLanguage()" class="flex items-center space-x-1 px-3 py-1.5 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors" aria-label="Toggle Language">
+                        <span class="text-sm font-medium text-gray-700">🌐</span>
+                        <span class="lang-switch-text text-sm font-medium text-gray-700">EN</span>
+                    </button>
+                </div>
+
+                <div class="md:hidden flex items-center space-x-3 relative z-50">
+                    <button onclick="toggleLanguage()" class="px-2 py-1 text-sm font-medium text-gray-700 bg-gray-100/80 rounded-md shadow-sm">🌐 <span class="lang-switch-text">EN</span></button>
+                    <button id="mobile-menu-btn" class="p-2 focus:outline-none relative w-8 h-8 flex items-center justify-center">
+                        <span class="absolute w-5 h-[2px] bg-gray-700 transition-all duration-300 transform -translate-y-1.5" id="menu-line-1"></span>
+                        <span class="absolute w-5 h-[2px] bg-gray-700 transition-all duration-300" id="menu-line-2"></span>
+                        <span class="absolute w-5 h-[2px] bg-gray-700 transition-all duration-300 transform translate-y-1.5" id="menu-line-3"></span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="mobile-menu-content" class="md:hidden absolute top-full left-0 right-0 bg-white/95 backdrop-blur-md shadow-md transition-all duration-300 overflow-hidden max-h-0 opacity-0 z-10">
+                <div class="flex flex-col w-full">
+                    <a href="index.html" data-i18n="nav.home">首页</a>
+                    <a href="api.html" data-i18n="nav.api">大模型API</a>
+                    <a href="products.html" data-i18n="nav.products">产品与方案</a>
+                    <a href="question.html" data-i18n="nav.faq">常见问题</a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <main class="flex-grow relative z-10">
+    <div id="mobile-menu" class="fixed inset-0 z-[100] bg-white transform translate-x-full transition-transform duration-300 md:hidden flex flex-col">
+        <div class="flex justify-between items-center p-4 border-b border-gray-100">
+            <img src="images/logo.svg" class="h-6" alt="Logo">
+            <button id="mobile-menu-close" class="p-2 text-gray-600 focus:outline-none">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div class="flex flex-col p-6 space-y-6">
+            <a href="index.html" data-i18n="nav.home" class="text-lg font-medium text-gray-800">首页</a>
+            <a href="api.html" data-i18n="nav.api" class="text-lg font-medium text-primary">大模型API</a>
+            <a href="products.html" data-i18n="nav.products" class="text-lg font-medium text-gray-800">产品与方案</a>
+            <a href="question.html" data-i18n="nav.faq" class="text-lg font-medium text-gray-800">常见问题</a>
+        </div>
+    </div>
+
+    <main class="flex-grow relative z-10 pb-20 md:pb-0">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 mb-20">
             <div class="bg-white/60 backdrop-blur-md rounded-3xl p-8 md:p-12 shadow-sm border border-white relative overflow-hidden flex flex-col md:flex-row items-center justify-between min-h-[400px]">
                 <div class="relative z-10 max-w-xl mb-10 md:mb-0">
                     <div class="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-primary text-xs font-semibold mb-6 shadow-sm">
                         <span class="flex w-2 h-2 rounded-full bg-primary mr-2 animate-pulse"></span>
-                        已接入 20+ 款全球顶尖 AI 模型
+                        <span data-i18n="api.hero.tag">已接入 20+ 款全球顶尖 AI 模型</span>
                     </div>
-                    <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 tracking-tight leading-tight">
+                    <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 tracking-tight leading-tight" data-i18n="api.hero.title">
                         全球顶尖大模型 <br>
                         <span class="text-transparent bg-clip-text bg-gradient-to-r from-secondary to-primary">官网API接入</span>
                     </h1>
-                    <p class="text-gray-600 text-base md:text-lg mb-8 leading-relaxed">
+                    <p class="text-gray-600 text-base md:text-lg mb-8 leading-relaxed" data-i18n="api.hero.desc">
                         官方品质，渠道底价。高并发、低延迟，一行代码平滑迁移。
                     </p>
                     <div class="flex space-x-4">
                         <a href="https://t.me/deekcloud" target="_blank" class="flex flex-col items-center group">
-                        <button class="px-8 py-3.5 bg-gradient-to-r from-primary to-secondary text-white font-medium rounded-full shadow-lg shadow-purple-500/30 hover:shadow-xl hover:scale-105 transition-all duration-300">
+                        <button class="px-8 py-3.5 bg-gradient-to-r from-primary to-secondary text-white font-medium rounded-full shadow-lg shadow-purple-500/30 hover:shadow-xl hover:scale-105 transition-all duration-300" data-i18n="api.hero.btn">
                             获取专属优惠
                         </button>
                         </a>
-                        <!-- <button class="px-8 py-3.5 bg-white text-gray-700 font-medium rounded-full shadow-sm hover:shadow-md border border-gray-200 hover:border-gray-300 transition-all duration-300">
-                            查看开发文档
-                        </button> -->
                     </div>
                 </div>
 
@@ -132,29 +168,29 @@
                     <div class="w-12 h-12 bg-blue-50 text-primary rounded-xl flex items-center justify-center mb-4">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                     </div>
-                    <h3 class="text-[17px] font-bold text-gray-800 mb-2">100% 官方原生</h3>
-                    <p class="text-sm text-gray-500 leading-relaxed">直连官方数据中心，拒绝二次封包缓存，确保输出质量与官方完全一致。</p>
+                    <h3 class="text-[17px] font-bold text-gray-800 mb-2" data-i18n="api.feat.t1">100% 官方原生</h3>
+                    <p class="text-sm text-gray-500 leading-relaxed" data-i18n="api.feat.d1">直连官方数据中心，拒绝二次封包缓存，确保输出质量与官方完全一致。</p>
                 </div>
                 <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-sm hover:-translate-y-1 hover:shadow-md transition-all duration-300 border border-white">
                     <div class="w-12 h-12 bg-purple-50 text-secondary rounded-xl flex items-center justify-center mb-4">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
                     </div>
-                    <h3 class="text-[17px] font-bold text-gray-800 mb-2">兼容标准协议</h3>
-                    <p class="text-sm text-gray-500 leading-relaxed">支持 OpenAI 接口规范，无缝对接各类开源项目及 Telegram 机器人（如 OpenClaw 等）。</p>
+                    <h3 class="text-[17px] font-bold text-gray-800 mb-2" data-i18n="api.feat.t2">兼容标准协议</h3>
+                    <p class="text-sm text-gray-500 leading-relaxed" data-i18n="api.feat.d2">支持 OpenAI 接口规范，无缝对接各类开源项目及 Telegram 机器人（如 OpenClaw 等）。</p>
                 </div>
                 <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-sm hover:-translate-y-1 hover:shadow-md transition-all duration-300 border border-white">
                     <div class="w-12 h-12 bg-pink-50 text-accent rounded-xl flex items-center justify-center mb-4">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                     </div>
-                    <h3 class="text-[17px] font-bold text-gray-800 mb-2">企业级高可用</h3>
-                    <p class="text-sm text-gray-500 leading-relaxed">自研智能路由算法，多通道并发负载均衡，SLA 稳定性保障高达 99.9%。</p>
+                    <h3 class="text-[17px] font-bold text-gray-800 mb-2" data-i18n="api.feat.t3">企业级高可用</h3>
+                    <p class="text-sm text-gray-500 leading-relaxed" data-i18n="api.feat.d3">自研智能路由算法，多通道并发负载均衡，SLA 稳定性保障高达 99.9%。</p>
                 </div>
                 <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-sm hover:-translate-y-1 hover:shadow-md transition-all duration-300 border border-white">
                     <div class="w-12 h-12 bg-indigo-50 text-indigo-500 rounded-xl flex items-center justify-center mb-4">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
-                    <h3 class="text-[17px] font-bold text-gray-800 mb-2">多币种便捷充值</h3>
-                    <p class="text-sm text-gray-500 leading-relaxed">突破支付壁垒，支持支付宝、微信、USDT、信用卡等，免除繁琐的绑卡流程。</p>
+                    <h3 class="text-[17px] font-bold text-gray-800 mb-2" data-i18n="api.feat.t4">多币种便捷充值</h3>
+                    <p class="text-sm text-gray-500 leading-relaxed" data-i18n="api.feat.d4">突破支付壁垒，支持支付宝、微信、USDT、信用卡等，免除繁琐的绑卡流程。</p>
                 </div>
             </div>
         </div>
@@ -162,7 +198,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-24 relative z-10">
             <div class="mb-16">
                 <div class="flex items-center space-x-3 mb-8">
-                    <h2 class="text-2xl font-bold text-gray-900 tracking-tight">海外顶级模型</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 tracking-tight" data-i18n="api.model.overseas">海外顶级模型</h2>
                     <div class="h-px flex-grow bg-gradient-to-r from-gray-200 to-transparent"></div>
                 </div>
                 
@@ -171,84 +207,82 @@
                         <div>
                             <div class="flex items-center justify-between mb-4">
                                 <div class="w-10 h-10 bg-orange-50 text-orange-600 rounded-lg flex items-center justify-center font-bold text-xl border border-orange-100">C</div>
-                                <span class="bg-red-50 text-red-500 text-[10px] font-bold px-2 py-1 rounded-full border border-red-100">超强逻辑</span>
+                                <span class="bg-red-50 text-red-500 text-[10px] font-bold px-2 py-1 rounded-full border border-red-100" data-i18n="api.model.tag1">超强逻辑</span>
                             </div>
                             <h3 class="text-lg font-bold text-gray-800 mb-1">Claude Opus 4.7</h3>
-                            <p class="text-xs text-gray-500 mb-5 leading-relaxed h-10">具备顶级逻辑推理与复杂代码编写能力，适合重度研发与科研学术场景。</p>
+                            <p class="text-xs text-gray-500 mb-5 leading-relaxed h-10" data-i18n="api.model.cdesc">具备顶级逻辑推理与复杂代码编写能力，适合重度研发与科研学术场景。</p>
                             
                             <div class="bg-gray-50/80 rounded-xl p-3 text-xs mb-6 border border-gray-100">
                                 <div class="flex justify-between mb-2">
-                                    <span class="text-gray-400">官方指导价</span>
+                                    <span class="text-gray-400" data-i18n="common.officialPrice">官方指导价</span>
                                     <span class="text-gray-500 line-through">$15.00 / 1M tokens</span>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span class="text-gray-600 font-medium">代理特惠价</span>
-                                    <!-- <span class="text-secondary font-bold text-base">$8.50 <span class="text-[10px] text-gray-400 font-normal">/ 1M</span></span> -->
-                                    <span class="text-secondary font-bold text-base">9折起</span>
+                                    <span class="text-gray-600 font-medium" data-i18n="common.agentPrice">代理特惠价</span>
+                                    <span class="text-secondary font-bold text-base" data-i18n="common.discount9">9折起</span>
                                 </div>
                             </div>
                         </div>
-                        <button class="w-full py-2.5 bg-gray-50 text-gray-700 font-semibold text-sm rounded-xl group-hover:bg-gradient-to-r group-hover:from-secondary group-hover:to-primary group-hover:text-white transition-all duration-300 border border-gray-200 group-hover:border-transparent">
+                        <a href="https://t.me/deekcloud" target="_blank" class="block text-center w-full py-2.5 bg-gray-50 text-gray-700 font-semibold text-sm rounded-xl group-hover:bg-gradient-to-r group-hover:from-secondary group-hover:to-primary group-hover:text-white transition-all duration-300 border border-gray-200 group-hover:border-transparent" data-i18n="common.callNow">
                             立即调用
-                        </button>
+                        </a>
                     </div>
 
                     <div class="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 flex flex-col justify-between group">
                         <div>
                             <div class="flex items-center justify-between mb-4">
                                 <div class="w-10 h-10 bg-blue-50 text-blue-500 rounded-lg flex items-center justify-center font-bold text-xl border border-blue-100">G</div>
-                                <span class="bg-blue-50 text-blue-500 text-[10px] font-bold px-2 py-1 rounded-full border border-blue-100">超长上下文</span>
+                                <span class="bg-blue-50 text-blue-500 text-[10px] font-bold px-2 py-1 rounded-full border border-blue-100" data-i18n="api.model.tag2">超长上下文</span>
                             </div>
                             <h3 class="text-lg font-bold text-gray-800 mb-1">Gemini 3.1 Pro</h3>
-                            <p class="text-xs text-gray-500 mb-5 leading-relaxed h-10">谷歌最强多模态模型，支持超大上下文窗口，擅长长文档分析与代码生成。</p>
+                            <p class="text-xs text-gray-500 mb-5 leading-relaxed h-10" data-i18n="api.model.gdesc">谷歌最强多模态模型，支持超大上下文窗口，擅长长文档分析与代码生成。</p>
                             
                             <div class="bg-gray-50/80 rounded-xl p-3 text-xs mb-6 border border-gray-100">
                                 <div class="flex justify-between mb-2">
-                                    <span class="text-gray-400">官方指导价</span>
+                                    <span class="text-gray-400" data-i18n="common.officialPrice">官方指导价</span>
                                     <span class="text-gray-500 line-through">$7.00 / 1M tokens</span>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span class="text-gray-600 font-medium">代理特惠价</span>
-                                    <!-- <span class="text-secondary font-bold text-base">$3.80 <span class="text-[10px] text-gray-400 font-normal">/ 1M</span></span> -->
-                                    <span class="text-secondary font-bold text-base">9折起</span>
+                                    <span class="text-gray-600 font-medium" data-i18n="common.agentPrice">代理特惠价</span>
+                                    <span class="text-secondary font-bold text-base" data-i18n="common.discount9">9折起</span>
                                 </div>
                             </div>
                         </div>
-                        <button class="w-full py-2.5 bg-gray-50 text-gray-700 font-semibold text-sm rounded-xl group-hover:bg-gradient-to-r group-hover:from-secondary group-hover:to-primary group-hover:text-white transition-all duration-300 border border-gray-200 group-hover:border-transparent">
+                        <a href="https://t.me/deekcloud" target="_blank" class="block text-center w-full py-2.5 bg-gray-50 text-gray-700 font-semibold text-sm rounded-xl group-hover:bg-gradient-to-r group-hover:from-secondary group-hover:to-primary group-hover:text-white transition-all duration-300 border border-gray-200 group-hover:border-transparent" data-i18n="common.callNow">
                             立即调用
-                        </button>
+                        </a>
                     </div>
 
                     <div class="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 flex flex-col justify-between group">
                         <div>
                             <div class="flex items-center justify-between mb-4">
                                 <div class="w-10 h-10 bg-teal-50 text-teal-600 rounded-lg flex items-center justify-center font-bold text-xl border border-teal-100">O</div>
-                                <span class="bg-green-50 text-green-500 text-[10px] font-bold px-2 py-1 rounded-full border border-green-100">全能旗舰</span>
+                                <span class="bg-green-50 text-green-500 text-[10px] font-bold px-2 py-1 rounded-full border border-green-100" data-i18n="api.model.tag3">全能旗舰</span>
                             </div>
                             <h3 class="text-lg font-bold text-gray-800 mb-1">GPT-4o</h3>
-                            <p class="text-xs text-gray-500 mb-5 leading-relaxed h-10">OpenAI 最新旗舰模型，多模态能力出众，响应速度极快，行业标准的奠基者。</p>
+                            <p class="text-xs text-gray-500 mb-5 leading-relaxed h-10" data-i18n="api.model.opdesc">OpenAI 最新旗舰模型，多模态能力出众，响应速度极快，行业标准的奠基者。</p>
                             
                             <div class="bg-gray-50/80 rounded-xl p-3 text-xs mb-6 border border-gray-100">
                                 <div class="flex justify-between mb-2">
-                                    <span class="text-gray-400">官方指导价</span>
+                                    <span class="text-gray-400" data-i18n="common.officialPrice">官方指导价</span>
                                     <span class="text-gray-500 line-through">$5.00 / 1M tokens</span>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span class="text-gray-600 font-medium">代理特惠价</span>
-                                    <span class="text-secondary font-bold text-base">9折起</span> 
+                                    <span class="text-gray-600 font-medium" data-i18n="common.agentPrice">代理特惠价</span>
+                                    <span class="text-secondary font-bold text-base" data-i18n="common.discount9">9折起</span> 
                                 </div>
                             </div>
                         </div>
-                        <button class="w-full py-2.5 bg-gray-50 text-gray-700 font-semibold text-sm rounded-xl group-hover:bg-gradient-to-r group-hover:from-secondary group-hover:to-primary group-hover:text-white transition-all duration-300 border border-gray-200 group-hover:border-transparent">
+                        <a href="https://t.me/deekcloud" target="_blank" class="block text-center w-full py-2.5 bg-gray-50 text-gray-700 font-semibold text-sm rounded-xl group-hover:bg-gradient-to-r group-hover:from-secondary group-hover:to-primary group-hover:text-white transition-all duration-300 border border-gray-200 group-hover:border-transparent" data-i18n="common.callNow">
                             立即调用
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>
 
             <div>
                 <div class="flex items-center space-x-3 mb-8">
-                    <h2 class="text-2xl font-bold text-gray-900 tracking-tight">国内爆款模型</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 tracking-tight" data-i18n="api.model.domestic">国内爆款模型</h2>
                     <div class="h-px flex-grow bg-gradient-to-r from-gray-200 to-transparent"></div>
                 </div>
                 
@@ -257,147 +291,147 @@
                         <div>
                             <div class="flex items-center justify-between mb-4">
                                 <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center font-bold text-xl border border-blue-100">D</div>
-                                <span class="bg-red-50 text-red-500 text-[10px] font-bold px-2 py-1 rounded-full border border-red-100">代码/数学顶配</span>
+                                <span class="bg-red-50 text-red-500 text-[10px] font-bold px-2 py-1 rounded-full border border-red-100" data-i18n="api.model.tag4">代码/数学顶配</span>
                             </div>
                             <h3 class="text-lg font-bold text-gray-800 mb-1">DeepSeek (深度求索)</h3>
-                            <p class="text-xs text-gray-500 mb-5 leading-relaxed h-10">开源界的最强王者，V3/R1 模型在代码与数学推理能力上表现卓越，极致性价比之选。</p>
+                            <p class="text-xs text-gray-500 mb-5 leading-relaxed h-10" data-i18n="api.model.dsdesc">开源界的最强王者，V3/R1 模型在代码与数学推理能力上表现卓越，极致性价比之选。</p>
                             
                             <div class="bg-gray-50/80 rounded-xl p-3 text-xs mb-6 border border-gray-100">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-gray-600 font-medium">代理特惠价</span>
-                                    <span class="text-primary font-bold text-base">优惠低至 9 折</span>
+                                    <span class="text-gray-600 font-medium" data-i18n="common.agentPrice">代理特惠价</span>
+                                    <span class="text-primary font-bold text-base" data-i18n="common.discountUpto9">优惠低至 9 折</span>
                                 </div>
                             </div>
                         </div>
-                        <button class="w-full py-2.5 bg-gray-50 text-gray-700 font-semibold text-sm rounded-xl group-hover:bg-gradient-to-r group-hover:from-secondary group-hover:to-primary group-hover:text-white transition-all duration-300 border border-gray-200 group-hover:border-transparent">
+                        <a href="https://t.me/deekcloud" target="_blank" class="block text-center w-full py-2.5 bg-gray-50 text-gray-700 font-semibold text-sm rounded-xl group-hover:bg-gradient-to-r group-hover:from-secondary group-hover:to-primary group-hover:text-white transition-all duration-300 border border-gray-200 group-hover:border-transparent" data-i18n="common.callNow">
                             立即调用
-                        </button>
+                        </a>
                     </div>
 
                     <div class="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 flex flex-col justify-between group">
                         <div>
                             <div class="flex items-center justify-between mb-4">
                                 <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center font-bold text-xl border border-indigo-100">豆</div>
-                                <span class="bg-indigo-50 text-indigo-500 text-[10px] font-bold px-2 py-1 rounded-full border border-indigo-100">字节跳动</span>
+                                <span class="bg-indigo-50 text-indigo-500 text-[10px] font-bold px-2 py-1 rounded-full border border-indigo-100" data-i18n="api.model.tag5">字节跳动</span>
                             </div>
                             <h3 class="text-lg font-bold text-gray-800 mb-1">Doubao (豆包)</h3>
-                            <p class="text-xs text-gray-500 mb-5 leading-relaxed h-10">基于火山引擎，响应极快，非常适合大规模高并发的智能问答与工具调用场景。</p>
+                            <p class="text-xs text-gray-500 mb-5 leading-relaxed h-10" data-i18n="api.model.dbdesc">基于火山引擎，响应极快，非常适合大规模高并发的智能问答与工具调用场景。</p>
                             
                             <div class="bg-gray-50/80 rounded-xl p-3 text-xs mb-6 border border-gray-100">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-gray-600 font-medium">代理特惠价</span>
-                                    <span class="text-primary font-bold text-base">优惠低至 9 折</span>
+                                    <span class="text-gray-600 font-medium" data-i18n="common.agentPrice">代理特惠价</span>
+                                    <span class="text-primary font-bold text-base" data-i18n="common.discountUpto9">优惠低至 9 折</span>
                                 </div>
                             </div>
                         </div>
-                        <button class="w-full py-2.5 bg-gray-50 text-gray-700 font-semibold text-sm rounded-xl group-hover:bg-gradient-to-r group-hover:from-secondary group-hover:to-primary group-hover:text-white transition-all duration-300 border border-gray-200 group-hover:border-transparent">
+                        <a href="https://t.me/deekcloud" target="_blank" class="block text-center w-full py-2.5 bg-gray-50 text-gray-700 font-semibold text-sm rounded-xl group-hover:bg-gradient-to-r group-hover:from-secondary group-hover:to-primary group-hover:text-white transition-all duration-300 border border-gray-200 group-hover:border-transparent" data-i18n="common.callNow">
                             立即调用
-                        </button>
+                        </a>
                     </div>
 
                     <div class="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 flex flex-col justify-between group">
                         <div>
                             <div class="flex items-center justify-between mb-4">
                                 <div class="w-10 h-10 bg-orange-50 text-orange-600 rounded-lg flex items-center justify-center font-bold text-xl border border-orange-100">Q</div>
-                                <span class="bg-orange-50 text-orange-600 text-[10px] font-bold px-2 py-1 rounded-full border border-orange-100">阿里系开源</span>
+                                <span class="bg-orange-50 text-orange-600 text-[10px] font-bold px-2 py-1 rounded-full border border-orange-100" data-i18n="api.model.tag6">阿里系开源</span>
                             </div>
                             <h3 class="text-lg font-bold text-gray-800 mb-1">Qwen (通义千问)</h3>
-                            <p class="text-xs text-gray-500 mb-5 leading-relaxed h-10">全面的多模态能力，中文语境理解深厚，提供从小到大多种参数规模的模型选择。</p>
+                            <p class="text-xs text-gray-500 mb-5 leading-relaxed h-10" data-i18n="api.model.qwdesc">全面的多模态能力，中文语境理解深厚，提供从小到大多种参数规模的模型选择。</p>
                             
                             <div class="bg-gray-50/80 rounded-xl p-3 text-xs mb-6 border border-gray-100">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-gray-600 font-medium">代理特惠价</span>
-                                    <span class="text-primary font-bold text-base">优惠低至 9 折</span>
+                                    <span class="text-gray-600 font-medium" data-i18n="common.agentPrice">代理特惠价</span>
+                                    <span class="text-primary font-bold text-base" data-i18n="common.discountUpto9">优惠低至 9 折</span>
                                 </div>
                             </div>
                         </div>
-                        <button class="w-full py-2.5 bg-gray-50 text-gray-700 font-semibold text-sm rounded-xl group-hover:bg-gradient-to-r group-hover:from-secondary group-hover:to-primary group-hover:text-white transition-all duration-300 border border-gray-200 group-hover:border-transparent">
+                        <a href="https://t.me/deekcloud" target="_blank" class="block text-center w-full py-2.5 bg-gray-50 text-gray-700 font-semibold text-sm rounded-xl group-hover:bg-gradient-to-r group-hover:from-secondary group-hover:to-primary group-hover:text-white transition-all duration-300 border border-gray-200 group-hover:border-transparent" data-i18n="common.callNow">
                             立即调用
-                        </button>
+                        </a>
                     </div>
 
                     <div class="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 flex flex-col justify-between group">
                         <div>
                             <div class="flex items-center justify-between mb-4">
                                 <div class="w-10 h-10 bg-sky-50 text-sky-600 rounded-lg flex items-center justify-center font-bold text-xl border border-sky-100">Z</div>
-                                <span class="bg-sky-50 text-sky-500 text-[10px] font-bold px-2 py-1 rounded-full border border-sky-100">企业级首选</span>
+                                <span class="bg-sky-50 text-sky-500 text-[10px] font-bold px-2 py-1 rounded-full border border-sky-100" data-i18n="api.model.tag7">企业级首选</span>
                             </div>
                             <h3 class="text-lg font-bold text-gray-800 mb-1">智谱清言 GLM-4</h3>
-                            <p class="text-xs text-gray-500 mb-5 leading-relaxed h-10">全能型选手，逻辑严密，适合企业内部知识库搭建、长文档分析与智能Agent开发。</p>
+                            <p class="text-xs text-gray-500 mb-5 leading-relaxed h-10" data-i18n="api.model.glmdesc">全能型选手，逻辑严密，适合企业内部知识库搭建、长文档分析与智能Agent开发。</p>
                             
                             <div class="bg-gray-50/80 rounded-xl p-3 text-xs mb-6 border border-gray-100">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-gray-600 font-medium">代理特惠价</span>
-                                    <span class="text-primary font-bold text-base">优惠低至 9 折</span>
+                                    <span class="text-gray-600 font-medium" data-i18n="common.agentPrice">代理特惠价</span>
+                                    <span class="text-primary font-bold text-base" data-i18n="common.discountUpto9">优惠低至 9 折</span>
                                 </div>
                             </div>
                         </div>
-                        <button class="w-full py-2.5 bg-gray-50 text-gray-700 font-semibold text-sm rounded-xl group-hover:bg-gradient-to-r group-hover:from-secondary group-hover:to-primary group-hover:text-white transition-all duration-300 border border-gray-200 group-hover:border-transparent">
+                        <a href="https://t.me/deekcloud" target="_blank" class="block text-center w-full py-2.5 bg-gray-50 text-gray-700 font-semibold text-sm rounded-xl group-hover:bg-gradient-to-r group-hover:from-secondary group-hover:to-primary group-hover:text-white transition-all duration-300 border border-gray-200 group-hover:border-transparent" data-i18n="common.callNow">
                             立即调用
-                        </button>
+                        </a>
                     </div>
 
                     <div class="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 flex flex-col justify-between group">
                         <div>
                             <div class="flex items-center justify-between mb-4">
                                 <div class="w-10 h-10 bg-zinc-100 text-zinc-800 rounded-lg flex items-center justify-center font-bold text-xl border border-zinc-200">K</div>
-                                <span class="bg-zinc-100 text-zinc-600 text-[10px] font-bold px-2 py-1 rounded-full border border-zinc-200">超长文本专家</span>
+                                <span class="bg-zinc-100 text-zinc-600 text-[10px] font-bold px-2 py-1 rounded-full border border-zinc-200" data-i18n="api.model.tag8">超长文本专家</span>
                             </div>
                             <h3 class="text-lg font-bold text-gray-800 mb-1">Kimi (月之暗面)</h3>
-                            <p class="text-xs text-gray-500 mb-5 leading-relaxed h-10">支持高达 200万字 无损上下文，财报分析、长篇材料总结与小说设定的绝对利器。</p>
+                            <p class="text-xs text-gray-500 mb-5 leading-relaxed h-10" data-i18n="api.model.kimidesc">支持高达 200万字 无损上下文，财报分析、长篇材料总结与小说设定的绝对利器。</p>
                             
                             <div class="bg-gray-50/80 rounded-xl p-3 text-xs mb-6 border border-gray-100">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-gray-600 font-medium">代理特惠价</span>
-                                    <span class="text-primary font-bold text-base">优惠低至 9 折</span>
+                                    <span class="text-gray-600 font-medium" data-i18n="common.agentPrice">代理特惠价</span>
+                                    <span class="text-primary font-bold text-base" data-i18n="common.discountUpto9">优惠低至 9 折</span>
                                 </div>
                             </div>
                         </div>
-                        <button class="w-full py-2.5 bg-gray-50 text-gray-700 font-semibold text-sm rounded-xl group-hover:bg-gradient-to-r group-hover:from-secondary group-hover:to-primary group-hover:text-white transition-all duration-300 border border-gray-200 group-hover:border-transparent">
+                        <a href="https://t.me/deekcloud" target="_blank" class="block text-center w-full py-2.5 bg-gray-50 text-gray-700 font-semibold text-sm rounded-xl group-hover:bg-gradient-to-r group-hover:from-secondary group-hover:to-primary group-hover:text-white transition-all duration-300 border border-gray-200 group-hover:border-transparent" data-i18n="common.callNow">
                             立即调用
-                        </button>
+                        </a>
                     </div>
 
                     <div class="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 flex flex-col justify-between group">
                         <div>
                             <div class="flex items-center justify-between mb-4">
                                 <div class="w-10 h-10 bg-cyan-50 text-cyan-600 rounded-lg flex items-center justify-center font-bold text-xl border border-cyan-100">H</div>
-                                <span class="bg-cyan-50 text-cyan-600 text-[10px] font-bold px-2 py-1 rounded-full border border-cyan-100">腾讯自研</span>
+                                <span class="bg-cyan-50 text-cyan-600 text-[10px] font-bold px-2 py-1 rounded-full border border-cyan-100" data-i18n="api.model.tag9">腾讯自研</span>
                             </div>
                             <h3 class="text-lg font-bold text-gray-800 mb-1">腾讯混元</h3>
-                            <p class="text-xs text-gray-500 mb-5 leading-relaxed h-10">依托腾讯生态体系，在内容创作、图片生成与中文意图理解方面表现成熟稳定。</p>
+                            <p class="text-xs text-gray-500 mb-5 leading-relaxed h-10" data-i18n="api.model.hydesc">依托腾讯生态体系，在内容创作、图片生成与中文意图理解方面表现成熟稳定。</p>
                             
                             <div class="bg-gray-50/80 rounded-xl p-3 text-xs mb-6 border border-gray-100">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-gray-600 font-medium">代理特惠价</span>
-                                    <span class="text-primary font-bold text-base">优惠低至 9 折</span>
+                                    <span class="text-gray-600 font-medium" data-i18n="common.agentPrice">代理特惠价</span>
+                                    <span class="text-primary font-bold text-base" data-i18n="common.discountUpto9">优惠低至 9 折</span>
                                 </div>
                             </div>
                         </div>
-                        <button class="w-full py-2.5 bg-gray-50 text-gray-700 font-semibold text-sm rounded-xl group-hover:bg-gradient-to-r group-hover:from-secondary group-hover:to-primary group-hover:text-white transition-all duration-300 border border-gray-200 group-hover:border-transparent">
+                        <a href="https://t.me/deekcloud" target="_blank" class="block text-center w-full py-2.5 bg-gray-50 text-gray-700 font-semibold text-sm rounded-xl group-hover:bg-gradient-to-r group-hover:from-secondary group-hover:to-primary group-hover:text-white transition-all duration-300 border border-gray-200 group-hover:border-transparent" data-i18n="common.callNow">
                             立即调用
-                        </button>
+                        </a>
                     </div>
 
                     <div class="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 flex flex-col justify-between group">
                         <div>
                             <div class="flex items-center justify-between mb-4">
                                 <div class="w-10 h-10 bg-purple-50 text-purple-600 rounded-lg flex items-center justify-center font-bold text-xl border border-purple-100">M</div>
-                                <span class="bg-purple-50 text-purple-600 text-[10px] font-bold px-2 py-1 rounded-full border border-purple-100">拟人/语音极佳</span>
+                                <span class="bg-purple-50 text-purple-600 text-[10px] font-bold px-2 py-1 rounded-full border border-purple-100" data-i18n="api.model.tag10">拟人/语音极佳</span>
                             </div>
                             <h3 class="text-lg font-bold text-gray-800 mb-1">MiniMax (海螺)</h3>
-                            <p class="text-xs text-gray-500 mb-5 leading-relaxed h-10">在语音合成(TTS)和拟人化对话角色扮演方面极具特色，适合泛娱乐社交与游戏NPC场景。</p>
+                            <p class="text-xs text-gray-500 mb-5 leading-relaxed h-10" data-i18n="api.model.mmdesc">在语音合成(TTS)和拟人化对话角色扮演方面极具特色，适合泛娱乐社交与游戏NPC场景。</p>
                             
                             <div class="bg-gray-50/80 rounded-xl p-3 text-xs mb-6 border border-gray-100">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-gray-600 font-medium">代理特惠价</span>
-                                    <span class="text-primary font-bold text-base">优惠低至 9 折</span>
+                                    <span class="text-gray-600 font-medium" data-i18n="common.agentPrice">代理特惠价</span>
+                                    <span class="text-primary font-bold text-base" data-i18n="common.discountUpto9">优惠低至 9 折</span>
                                 </div>
                             </div>
                         </div>
-                        <button class="w-full py-2.5 bg-gray-50 text-gray-700 font-semibold text-sm rounded-xl group-hover:bg-gradient-to-r group-hover:from-secondary group-hover:to-primary group-hover:text-white transition-all duration-300 border border-gray-200 group-hover:border-transparent">
+                        <a href="https://t.me/deekcloud" target="_blank" class="block text-center w-full py-2.5 bg-gray-50 text-gray-700 font-semibold text-sm rounded-xl group-hover:bg-gradient-to-r group-hover:from-secondary group-hover:to-primary group-hover:text-white transition-all duration-300 border border-gray-200 group-hover:border-transparent" data-i18n="common.callNow">
                             立即调用
-                        </button>
+                        </a>
                     </div>               
                 </div>
             </div>
@@ -407,13 +441,13 @@
             <div class="bg-dark rounded-3xl shadow-2xl overflow-hidden border border-gray-800 flex flex-col md:flex-row">
                 <div class="p-10 md:w-5/12 flex flex-col justify-center relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-64 h-64 bg-primary/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
-                    <h2 class="text-3xl font-bold text-white mb-4 relative z-10">三行代码，极速切流</h2>
-                    <p class="text-gray-400 text-sm leading-relaxed mb-8 relative z-10">
+                    <h2 class="text-3xl font-bold text-white mb-4 relative z-10" data-i18n="api.code.title">三行代码，极速切流</h2>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-8 relative z-10" data-i18n="api.code.desc">
                         无需修改您的底层业务逻辑。全面兼容 OpenAI SDK 格式，您只需修改 <code class="text-secondary bg-gray-800 px-1.5 py-0.5 rounded">base_url</code> 和 <code class="text-secondary bg-gray-800 px-1.5 py-0.5 rounded">api_key</code>，即可瞬间无缝切换到 DeekCloud 的高速 API 节点。
                     </p>
                     <div class="flex items-center space-x-2 text-sm text-gray-300 relative z-10">
                         <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                        <span>完美兼容各大 Telegram 开源 Bot 及客户端框架</span>
+                        <span data-i18n="api.code.check">完美兼容各大 Telegram 开源 Bot 及客户端框架</span>
                     </div>
                 </div>
 
@@ -424,32 +458,32 @@
                         <div class="w-3 h-3 rounded-full bg-green-500"></div>
                     </div>
                     <button id="copy-btn" class="absolute top-3 right-4 text-gray-400 hover:text-white transition-colors" title="复制代码">
-    <svg id="copy-icon-default" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-    </svg>
-    <svg id="copy-icon-success" class="w-5 h-5 hidden text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-    </svg>
-</button>
+                        <svg id="copy-icon-default" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                        </svg>
+                        <svg id="copy-icon-success" class="w-5 h-5 hidden text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </button>
 
-<div class="mt-8 text-gray-300 leading-loose overflow-x-auto">
+                    <div class="mt-8 text-gray-300 leading-loose overflow-x-auto">
 <pre><code id="code-content"><span class="text-purple-400">from</span> openai <span class="text-purple-400">import</span> OpenAI
 
-<span class="text-gray-500 italic"># 只需替换为您在 DeekCloud 获取的专属密钥与节点地址</span>
+<span class="text-gray-500 italic" data-i18n="api.code.c1"># 只需替换为您在 DeekCloud 获取的专属密钥与节点地址</span>
 client = OpenAI(
     api_key=<span class="text-green-300">"sk-your-deekcloud-key"</span>,
     base_url=<span class="text-green-300">"https://api.deekcloud.com/v1"</span>
 )
 
 response = client.chat.completions.create(
-    model=<span class="text-green-300">"deepseek-chat"</span>, <span class="text-gray-500 italic"># 或 "gemini-pro" / "claude-3-opus"</span>
+    model=<span class="text-green-300">"deepseek-chat"</span>, <span class="text-gray-500 italic" data-i18n="api.code.c2"># 或 "gemini-pro" / "claude-3-opus"</span>
     messages=[
-        {<span class="text-blue-300">"role"</span>: <span class="text-green-300">"user"</span>, <span class="text-blue-300">"content"</span>: <span class="text-green-300">"写一段Python并发处理代码"</span>}
+        {<span class="text-blue-300">"role"</span>: <span class="text-green-300">"user"</span>, <span class="text-blue-300">"content"</span>: <span class="text-green-300" data-i18n="api.code.c3">"写一段Python并发处理代码"</span>}
     ]
 )
 
 <span class="text-blue-400">print</span>(response.choices[<span class="text-orange-300">0</span>].message.content)<span class="cursor-blink font-bold text-white">_</span></code></pre>
-</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -460,46 +494,51 @@ response = client.chat.completions.create(
             <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
                 <div>
                     <span class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 tracking-tight inline-block mb-4">DeekCloud</span>
-                    <p class="text-gray-400 text-sm leading-relaxed mb-6 border-l-2 border-gray-700 pl-4">
-                        DeekCloud 致力于为您提供一站式多云代理与顶尖大模型接口服务。我们通过整合全球优质资源，助力企业降本增效，轻松构建AI时代云上业务。
+                    <p class="text-gray-400 text-sm leading-relaxed mb-6 border-l-2 border-gray-700 pl-4" data-i18n="footer.desc">
+                        DeekCloud 致力于为您提供一站式多云代理与顶尖大模型接口服务。我们通过整合全球优质资源，助力企业降本增效，轻松构建云上业务。
                     </p>
                     <div class="flex items-center space-x-2 text-gray-300 bg-gray-800/50 p-3 rounded-full inline-flex">
-                        <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-                        <span class="font-semibold tracking-wider text-sm">@deekcloud</span>
+                        <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path>
+                        </svg>
+                        <a href="https://t.me/deekcloud" >
+                            <span class="font-semibold tracking-wider text-sm">@deekcloud</span>
+                        </a>
                     </div>
                 </div>
 
                 <div>
-                    <h3 class="text-white text-lg font-bold mb-6 relative inline-block">快速导航<span class="absolute bottom-0 left-0 w-8 h-0.5 bg-primary rounded"></span></h3>
+                    <h3 class="text-white text-lg font-bold mb-6 relative inline-block"><span data-i18n="footer.quickNav">快速导航</span><span class="absolute bottom-0 left-0 w-8 h-0.5 bg-primary rounded"></span></h3>
                     <ul class="space-y-3">
-                        <li><a href="index.html" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center"><svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>首页</a></li>
-                        <li><a href="api.html" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center"><svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>大模型API</a></li>
-                        <li><a href="products.html" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center"><svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>产品与方案</a></li>
-                        <li><a href="question.html" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center"><svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>常见问题</a></li>                
+                        <li><a href="index.html" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center"><svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg><span data-i18n="nav.home">首页</span></a></li>
+                        <li><a href="api.html" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center"><svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg><span data-i18n="nav.api">大模型API</span></a></li>
+                        <li><a href="products.html" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center"><svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg><span data-i18n="nav.products">产品与方案</span></a></li>
+                        <li><a href="question.html" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center"><svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg><span data-i18n="nav.faq">常见问题</span></a></li>                
                     </ul>
                 </div>
 
                 <div>
-                    <h3 class="text-white text-lg font-bold mb-6 relative inline-block">支持的服务<span class="absolute bottom-0 left-0 w-8 h-0.5 bg-primary rounded"></span></h3>
+                    <h3 class="text-white text-lg font-bold mb-6 relative inline-block"><span data-i18n="footer.supportedClouds">支持的云平台</span><span class="absolute bottom-0 left-0 w-8 h-0.5 bg-primary rounded"></span></h3>
                     <ul class="space-y-3">
-                        <li class="flex items-center text-gray-400 text-sm"><span class="w-1.5 h-1.5 bg-secondary rounded-full mr-3 animate-pulse"></span> OpenAI / Claude 系列</li>
-                        <li class="flex items-center text-gray-400 text-sm"><span class="w-1.5 h-1.5 bg-secondary rounded-full mr-3 animate-pulse"></span> Gemini / DeepSeek 系列</li>
-                        <li class="flex items-center text-gray-400 text-sm"><span class="w-1.5 h-1.5 bg-primary rounded-full mr-3 animate-pulse"></span> 阿里云 / 腾讯云国际</li>
-                        <li class="flex items-center text-gray-400 text-sm"><span class="w-1.5 h-1.5 bg-primary rounded-full mr-3 animate-pulse"></span> AWS / Google Cloud</li>
+                        <li class="flex items-center text-gray-400 text-sm"><span class="w-1.5 h-1.5 bg-primary rounded-full mr-3 animate-pulse"></span> <span data-i18n="footer.aliyun">阿里云国际</span></li>
+                        <li class="flex items-center text-gray-400 text-sm"><span class="w-1.5 h-1.5 bg-primary rounded-full mr-3 animate-pulse"></span> <span data-i18n="footer.tencent">腾讯云国际</span></li>
+                        <li class="flex items-center text-gray-400 text-sm"><span class="w-1.5 h-1.5 bg-primary rounded-full mr-3 animate-pulse"></span> <span data-i18n="footer.huawei">华为云国际</span></li>
+                        <li class="flex items-center text-gray-400 text-sm"><span class="w-1.5 h-1.5 bg-primary rounded-full mr-3 animate-pulse"></span> <span data-i18n="footer.aws">AWS Cloud</span></li>
+                        <li class="flex items-center text-gray-400 text-sm"><span class="w-1.5 h-1.5 bg-primary rounded-full mr-3 animate-pulse"></span> <span data-i18n="footer.gcp">Google Cloud</span></li>
                     </ul>
                 </div>
             </div>
             <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
-                <p>&copy; 2026 DeekCloud. All rights reserved.</p>
+                <p data-i18n="footer.rights">&copy; 2026 DeekCloud. All rights reserved.</p>
                 <div class="flex space-x-4 mt-4 md:mt-0">
-                    <a href="#" class="hover:text-gray-300 transition-colors">隐私政策</a>
-                    <a href="#" class="hover:text-gray-300 transition-colors">服务条款</a>
+                    <a href="docs.html#privacy" data-i18n="footer.privacy" class="hover:text-gray-300 transition-colors">隐私政策</a>
+                    <a href="docs.html#user-agreement" data-i18n="footer.terms" class="hover:text-gray-300 transition-colors">服务条款</a>
                 </div>
             </div>
         </div>
     </footer>
     
-    <div class="fixed right-6 top-1/2 -translate-y-1/2 z-50 flex flex-col items-center space-y-4 hidden md:flex">
+    <div class="fixed right-6 top-1/2 -translate-y-1/2 z-50 flex-col items-center space-y-4 hidden md:flex">
         <a href="https://t.me/deekcloud" target="_blank" class="relative group flex flex-col items-center hover:-translate-y-1 transition-transform duration-300 mb-1">
             <div class="w-[52px] h-[52px] bg-white rounded-full shadow-[0_0_0_4px_white,0_4px_12px_rgba(55,174,226,0.3)] flex items-center justify-center relative z-10">
                 <svg class="w-[48px] h-[48px]" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -513,48 +552,43 @@ response = client.chat.completions.create(
                     <path d="M5.49 11.66l11.77-4.54c.54-.21 1.04.14.86.88l-2.01 9.49c-.15.68-.56.85-1.13.53l-3.07-2.26-1.48 1.43c-.16.16-.3.3-.61.3l.22-3.13 5.71-5.16c.25-.22-.05-.35-.39-.13l-7.06 4.44-3.04-.95c-.66-.21-.67-.66.14-.97z" fill="white"></path>
                 </svg>
             </div>
-            <div class="absolute -bottom-2.5 bg-[#1E96C8] text-white text-[11px] font-bold px-2.5 py-0.5 rounded shadow-sm z-20 whitespace-nowrap">
+            <div class="absolute -bottom-2.5 bg-[#1E96C8] text-white text-[11px] font-bold px-2.5 py-0.5 rounded shadow-sm z-20 whitespace-nowrap" data-i18n="social.contact">
                 联系客服
             </div>
         </a>
 
         <div class="bg-[#F8FAFC]/95 backdrop-blur-md rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.06)] py-6 px-3 flex flex-col items-center space-y-6 border border-white">
-            
             <a href="https://t.me/deekcloud" target="_blank" class="flex flex-col items-center group">
                 <div class="w-8 h-8 flex items-center justify-center rounded-full group-hover:bg-[#25D366]/10 transition-colors duration-300">
                     <svg class="w-[20px] h-[20px] text-[#25D366] group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 0C5.412 0 .046 5.365.046 11.986c0 2.115.552 4.167 1.6 5.986L.046 24l6.177-1.62c1.761.947 3.737 1.446 5.808 1.446 6.619 0 11.985-5.365 11.985-11.986S18.65 0 12.031 0zm.006 21.841c-1.789 0-3.538-.481-5.074-1.393l-.364-.216-3.77.989.998-3.676-.237-.377a9.985 9.985 0 0 1-1.528-5.334c0-5.523 4.494-10.017 10.017-10.017s10.016 4.494 10.016 10.017c0 5.522-4.493 10.017-10.016 10.017zm5.5-7.514c-.302-.151-1.787-.882-2.064-.984-.277-.101-.479-.151-.68.151-.202.302-.782.984-.959 1.185-.176.202-.353.227-.655.076-.302-.151-1.275-.47-2.428-1.503-.898-.806-1.504-1.801-1.68-2.103-.176-.302-.019-.465.132-.616.136-.136.302-.353.453-.529.151-.176.202-.302.302-.504.101-.202.05-.378-.025-.529-.076-.151-.68-1.638-.933-2.243-.245-.59-.496-.51-.68-.52-.176-.01-.378-.01-.579-.01-.202 0-.529.076-.806.378-.277.302-1.058 1.033-1.058 2.52s1.083 2.922 1.234 3.123c.151.202 2.13 3.25 5.158 4.556 2.051.884 2.763.958 3.518.882.85-.086 2.064-.844 2.355-1.659.29-.815.29-1.514.202-1.659-.088-.146-.315-.222-.617-.373z"/></svg>
                 </div>
-                <span class="text-[11px] text-gray-600 mt-0.5">WhatsApp</span>
+                <span class="text-[11px] text-gray-600 mt-0.5" data-i18n="social.whatsapp">WhatsApp</span>
             </a>
-
-            <a href="https://t.me/deekcloud" target="_blank" class="flex flex-col items-center group">
+            <a href="https://x.com/zqs1qcep2uay9ef?s=21&t=oJB6mzCfgk0lUdpuDrt61w" target="_blank" class="flex flex-col items-center group">
                 <div class="w-8 h-8 flex items-center justify-center rounded-full group-hover:bg-gray-200 transition-colors duration-300">
                     <svg class="w-[16px] h-[16px] text-gray-900 group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                 </div>
-                <span class="text-[11px] text-gray-600 mt-0.5">X</span>
+                <span class="text-[11px] text-gray-600 mt-0.5" data-i18n="social.x">X</span>
             </a>
-
-            <a href="https://t.me/deekcloud" target="_blank" class="flex flex-col items-center group">
+            <a href="https://www.facebook.com/share/17kP1GqZs4/?mibextid=LQQJ4d" target="_blank" class="flex flex-col items-center group">
                 <div class="w-8 h-8 flex items-center justify-center rounded-full group-hover:bg-[#0084FF]/10 transition-colors duration-300">
                     <svg class="w-[20px] h-[20px] text-[#0084FF] group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.053 0 11.289c0 3.551 1.71 6.726 4.382 8.868v3.843l4.004-2.203c1.166.326 2.396.5 3.614.5 6.627 0 12-5.053 12-11.289S18.627 0 12 0zm1.096 15.088l-2.822-3.007-5.503 3.007 6.052-6.425 2.89 3.007 5.435-3.007-6.052 6.425z"/></svg>
                 </div>
-                <span class="text-[11px] text-gray-600 mt-0.5">Messenger</span>
+                <span class="text-[11px] text-gray-600 mt-0.5" data-i18n="social.messenger">Messenger</span>
             </a>
-
-            <a href="https://t.me/deekcloud" target="_blank" class="flex flex-col items-center group">
+            <a href="https://discord.com/users/deekcloud" target="_blank" class="flex flex-col items-center group">
                 <div class="w-8 h-8 flex items-center justify-center rounded-full group-hover:bg-[#5865F2]/10 transition-colors duration-300">
                     <svg class="w-[20px] h-[20px] text-[#5865F2] group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 24 24"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></svg>
                 </div>
-                <span class="text-[11px] text-gray-600 mt-0.5">Discord</span>
+                <span class="text-[11px] text-gray-600 mt-0.5" data-i18n="social.discord">Discord</span>
             </a>
-
             <a href="https://t.me/deekcloud" target="_blank" class="flex flex-col items-center group">
                 <div class="w-8 h-8 flex items-center justify-center rounded-full group-hover:bg-[#00AFF0]/10 transition-colors duration-300">
                     <svg class="w-[20px] h-[20px] text-[#00AFF0] group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 24 24" fill-rule="evenodd" clip-rule="evenodd">
                         <path d="M12.002 0c-1.303 0-2.529.256-3.648.742C7.295.277 6.183 0 4.992 0 2.238 0 0 2.238 0 4.992c0 1.19.277 2.302.742 3.36C.256 9.471 0 10.697 0 12.002c0 6.627 5.375 12.002 12.002 12.002 1.303 0 2.529-.256 3.648-.742 1.058.465 2.17.742 3.36.742 2.754 0 4.992-2.238 4.992-4.992 0-1.19-.277-2.302-.742-3.36.486-1.119.742-2.345.742-3.648C24.004 5.375 18.629 0 12.002 0zm0 5.48c1.353 0 2.551.34 3.593 1.02.774.524 1.077 1.446.732 2.279-.277.674-1.033 1.047-1.734.808-.415-.145-.733-.36-1.016-.547-.84-.55-1.758-.8-2.673-.8-1.594 0-2.731.812-2.731 1.932 0 1.022.68 1.516 2.356 1.968l1.393.385c2.613.727 4.144 1.889 4.144 3.996 0 2.65-2.279 4.604-5.59 4.604-1.725 0-3.355-.45-4.664-1.352-.777-.525-1.082-1.464-.73-2.302.268-.65 1.02-.994 1.697-.783.393.125.706.326.98.514.981.685 2.128.989 3.197.989 1.77 0 2.924-.763 2.924-1.956 0-1.023-.681-1.523-2.357-1.974l-1.394-.386c-2.61-.722-4.142-1.884-4.142-3.99 0-2.645 2.28-4.596 5.59-4.596z"/>
                     </svg>
                 </div>
-                <span class="text-[11px] text-gray-600 mt-0.5">Skype</span>
+                <span class="text-[11px] text-gray-600 mt-0.5" data-i18n="social.skype">Skype</span>
             </a>
         </div>
 
@@ -562,6 +596,55 @@ response = client.chat.completions.create(
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" /></svg>
         </button>
     </div>
+
+    <div class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-t border-gray-100 p-3 flex justify-between items-center shadow-[0_-10px_20px_rgba(0,0,0,0.03)] pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
+        
+        <a href="https://t.me/deekcloud" class="flex-1 flex justify-center items-center py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-full font-bold text-[15px] tracking-wide shadow-lg shadow-primary/30 active:scale-95 transition-all duration-200">
+            <svg class="w-5 h-5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path>
+            </svg>
+            <span data-i18n="social.contact">联系客服</span>
+        </a>
+
+        <button id="mobile-social-toggle" class="ml-3 p-3 bg-gray-100/80 rounded-full text-gray-600 flex items-center justify-center shadow-sm active:bg-gray-200 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path></svg>
+        </button>
+    </div>
+
+    <div id="mobile-social-sheet" class="fixed inset-0 z-[100] hidden">
+        <div id="mobile-social-overlay" class="absolute inset-0 bg-black/50 opacity-0 transition-opacity duration-300"></div>
+        <div id="mobile-social-content" class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl transform translate-y-full transition-transform duration-300 p-6 pb-10">
+            <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-6"></div>
+            <h3 class="text-center text-lg font-bold mb-6" data-i18n="social.more">更多联系方式</h3>
+            <div class="grid grid-cols-4 gap-4">
+                <a href="https://t.me/deekcloud" class="flex flex-col items-center">
+                    <div class="w-12 h-12 flex items-center justify-center rounded-full bg-[#25D366]/10 mb-2">
+                        <svg class="w-6 h-6 text-[#25D366]" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 0C5.412 0 .046 5.365.046 11.986c0 2.115.552 4.167 1.6 5.986L.046 24l6.177-1.62c1.761.947 3.737 1.446 5.808 1.446 6.619 0 11.985-5.365 11.985-11.986S18.65 0 12.031 0zm.006 21.841c-1.789 0-3.538-.481-5.074-1.393l-.364-.216-3.77.989.998-3.676-.237-.377a9.985 9.985 0 0 1-1.528-5.334c0-5.523 4.494-10.017 10.017-10.017s10.016 4.494 10.016 10.017c0 5.522-4.493 10.017-10.016 10.017zm5.5-7.514c-.302-.151-1.787-.882-2.064-.984-.277-.101-.479-.151-.68.151-.202.302-.782.984-.959 1.185-.176.202-.353.227-.655.076-.302-.151-1.275-.47-2.428-1.503-.898-.806-1.504-1.801-1.68-2.103-.176-.302-.019-.465.132-.616.136-.136.302-.353.453-.529.151-.176.202-.302.302-.504.101-.202.05-.378-.025-.529-.076-.151-.68-1.638-.933-2.243-.245-.59-.496-.51-.68-.52-.176-.01-.378-.01-.579-.01-.202 0-.529.076-.806.378-.277.302-1.058 1.033-1.058 2.52s1.083 2.922 1.234 3.123c.151.202 2.13 3.25 5.158 4.556 2.051.884 2.763.958 3.518.882.85-.086 2.064-.844 2.355-1.659.29-.815.29-1.514.202-1.659-.088-.146-.315-.222-.617-.373z"/></svg>
+                    </div>
+                    <span class="text-xs text-gray-600" data-i18n="social.whatsapp">WhatsApp</span>
+                </a>
+                <a href="https://x.com/zqs1qcep2uay9ef?s=21&t=oJB6mzCfgk0lUdpuDrt61w" class="flex flex-col items-center">
+                    <div class="w-12 h-12 flex items-center justify-center rounded-full bg-gray-100 mb-2">
+                        <svg class="w-5 h-5 text-gray-900" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    </div>
+                    <span class="text-xs text-gray-600" data-i18n="social.x">X</span>
+                </a>
+                <a href="https://www.facebook.com/share/17kP1GqZs4/?mibextid=LQQJ4d" class="flex flex-col items-center">
+                    <div class="w-12 h-12 flex items-center justify-center rounded-full bg-[#0084FF]/10 mb-2">
+                        <svg class="w-6 h-6 text-[#0084FF]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.053 0 11.289c0 3.551 1.71 6.726 4.382 8.868v3.843l4.004-2.203c1.166.326 2.396.5 3.614.5 6.627 0 12-5.053 12-11.289S18.627 0 12 0zm1.096 15.088l-2.822-3.007-5.503 3.007 6.052-6.425 2.89 3.007 5.435-3.007-6.052 6.425z"/></svg>
+                    </div>
+                    <span class="text-xs text-gray-600" data-i18n="social.messenger">Messenger</span>
+                </a>
+                <a href="https://discord.com/users/deekcloud" class="flex flex-col items-center">
+                    <div class="w-12 h-12 flex items-center justify-center rounded-full bg-[#5865F2]/10 mb-2">
+                        <svg class="w-6 h-6 text-[#5865F2]" fill="currentColor" viewBox="0 0 24 24"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></svg>
+                    </div>
+                    <span class="text-xs text-gray-600" data-i18n="social.discord">Discord</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const copyBtn = document.getElementById('copy-btn');
@@ -572,18 +655,12 @@ response = client.chat.completions.create(
             if (copyBtn && codeContent) {
                 copyBtn.addEventListener('click', async () => {
                     try {
-                        // 获取纯文本内容（自动过滤掉 span 等 HTML 标签）
-                        // 使用 textContent 以保留代码的换行格式
-                        const textToCopy = codeContent.textContent.replace(/_$/, ''); // 去掉尾部模拟的闪烁光标下划线
-
-                        // 调用现代浏览器的 Clipboard API 写入剪贴板
+                        const textToCopy = codeContent.textContent.replace(/_$/, '');
                         await navigator.clipboard.writeText(textToCopy);
-
-                        // UI 反馈：切换为打勾图标
+                        
                         iconDefault.classList.add('hidden');
                         iconSuccess.classList.remove('hidden');
                         
-                        // 2秒后恢复默认图标
                         setTimeout(() => {
                             iconDefault.classList.remove('hidden');
                             iconSuccess.classList.add('hidden');
