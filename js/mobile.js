@@ -2,15 +2,20 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // === 1. 自动高亮当前页面的导航项 (桌面端 + 移动端) ===
-    // 获取当前页面的文件名，默认为 index.html
-    let currentPage = window.location.pathname.split('/').pop() || 'index.html';
-    if (currentPage === '') currentPage = 'index.html';
+    // 获取当前页面的文件名，处理线上无后缀(Clean URLs)和本地有后缀的情况
+    let currentSegment = window.location.pathname.split('/').pop();
+    if (currentSegment === '') currentSegment = 'index'; // 默认首页
+    // 剔除当前路径的 .html 后缀
+    let currentPageBase = currentSegment.replace('.html', '');
 
     // 桌面端导航高亮自动分配
     const desktopLinks = document.querySelectorAll('nav .hidden.md\\:flex.space-x-8 a');
     desktopLinks.forEach(link => {
         const href = link.getAttribute('href');
-        if (href === currentPage) {
+        // 剔除 href 的 .html 后缀进行精准比对
+        const hrefBase = href.replace('.html', '');
+        
+        if (hrefBase === currentPageBase) {
             link.className = 'inline-flex items-center px-1 pt-1 border-b-2 border-primary text-sm font-medium text-primary transition-all duration-300';
         } else {
             link.className = 'inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-900 hover:border-gray-300 transition-all duration-300';
@@ -18,11 +23,13 @@ document.addEventListener('DOMContentLoaded', () => {
         link.style.textDecoration = 'none';
     });
 
-    // 移动端下拉菜单高亮自动分配 (精确还原截图效果)
+    // 移动端下拉菜单高亮自动分配
     const mobileLinks = document.querySelectorAll('#mobile-menu-content a');
     mobileLinks.forEach(link => {
         const href = link.getAttribute('href');
-        if (href === currentPage) {
+        const hrefBase = href.replace('.html', '');
+        
+        if (hrefBase === currentPageBase) {
             // 选中状态：主色调文字 + 极浅的主色调背景
             link.className = 'block w-full px-6 py-4 text-base font-medium text-primary bg-indigo-50/50 border-b border-gray-100 transition-colors';
         } else {
